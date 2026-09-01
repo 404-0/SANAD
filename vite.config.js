@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+﻿import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -12,7 +12,10 @@ import { VitePWA } from 'vite-plugin-pwa';
  * only thing that needs connectivity is the AI classifier, which already falls
  * back to the offline matcher.
  */
+const BASE = process.env.BASE_PATH || '/';
+
 export default defineConfig({
+  base: BASE,
   plugins: [
     react(),
     tailwindcss(),
@@ -20,14 +23,14 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['apple-touch-icon.png'],
       manifest: {
-        id: '/',
-        name: 'SANAD — سند',
-        short_name: 'سند',
-        description: 'Verified step-by-step first aid, offline. إسعافات أولية موثوقة خطوة بخطوة.',
+        id: BASE,
+        name: 'SANAD â€” Ø³Ù†Ø¯',
+        short_name: 'Ø³Ù†Ø¯',
+        description: 'Verified step-by-step first aid, offline. Ø¥Ø³Ø¹Ø§ÙØ§Øª Ø£ÙˆÙ„ÙŠØ© Ù…ÙˆØ«ÙˆÙ‚Ø© Ø®Ø·ÙˆØ© Ø¨Ø®Ø·ÙˆØ©.',
         lang: 'ar',
         dir: 'rtl',
-        start_url: '/',
-        scope: '/',
+        start_url: BASE,
+        scope: BASE,
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#EFEFEC',
@@ -41,7 +44,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,woff2}'],
-        navigateFallback: 'index.html',
+        navigateFallback: BASE + 'index.html',
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
@@ -86,3 +89,4 @@ export default defineConfig({
   ],
   server: { host: true, port: 5173 },
 });
+
