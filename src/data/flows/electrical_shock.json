@@ -1,0 +1,276 @@
+{
+  "id": "electrical_shock",
+  "schema_version": "1.0.0",
+  "name_ar": "الصدمة الكهربائية",
+  "name_en": "Electrical Shock",
+  "last_reviewed": "2026-08-18",
+  "medical_disclaimer_required": true,
+  "emergency_number": {
+    "strategy": "REGION_CONFIGURED",
+    "number": null,
+    "requires_verification": true
+  },
+  "sources": {
+    "NHS-ELECTRIC": {
+      "title": "NHS — First aid: electric shock",
+      "url": "https://www.nhs.uk/tests-and-treatments/first-aid/"
+    },
+    "SJA-ELECTRIC": {
+      "title": "St John Ambulance — Electric Shock First Aid",
+      "url": "https://www.sja.org.uk/first-aid-advice/electrocution/"
+    },
+    "SJA-PRIMARY": {
+      "title": "St John Ambulance — Primary survey",
+      "url": "https://www.sja.org.uk/first-aid-advice/primary-survey/"
+    },
+    "ARC-POWERLINES": {
+      "title": "American Red Cross — Power Outage Safety",
+      "url": "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/power-outage.html"
+    }
+  },
+  "classification": {
+    "high_confidence_signals": [
+      {
+        "signal": "person is or was in contact with an electrical source",
+        "sources": [
+          "NHS-ELECTRIC",
+          "SJA-ELECTRIC"
+        ]
+      },
+      {
+        "signal": "electrical injury with burn, collapse, unresponsiveness, or abnormal breathing",
+        "sources": [
+          "SJA-ELECTRIC"
+        ]
+      }
+    ],
+    "ambiguous_signals": [
+      "got shocked",
+      "touched a wire",
+      "electricity hit him",
+      "spark from appliance"
+    ],
+    "allow_uncertain": true
+  },
+  "state": {
+    "power_isolated": false,
+    "responsive": null,
+    "breathing_normally": null,
+    "burn_present": null,
+    "high_voltage_or_fallen_line": false,
+    "emergency_called": false
+  },
+  "entry_logic": {
+    "start_node": "q_still_in_contact"
+  },
+  "nodes": [
+    {
+      "id": "q_still_in_contact",
+      "type": "question",
+      "question_ar": "هل ما زال المصاب ملامسًا لمصدر الكهرباء؟",
+      "question_en": "Is the person still in contact with the electrical source?",
+      "answers": {
+        "yes": "do_not_touch",
+        "no": "check_response"
+      },
+      "sources": [
+        "NHS-ELECTRIC",
+        "SJA-ELECTRIC"
+      ]
+    },
+    {
+      "id": "do_not_touch",
+      "type": "instruction",
+      "title_ar": "لا تلمس المصاب",
+      "title_en": "Do NOT touch the person.",
+      "description_ar": "افصل التيار من المصدر الرئيسي إن كان ذلك آمنًا. لا تقترب حتى تتأكد أن الكهرباء انقطعت.",
+      "description_en": "Switch off the electricity at the main source if it is safe to do so. Do not approach until you are sure the power is off.",
+      "next": "q_power_off",
+      "sources": [
+        "NHS-ELECTRIC",
+        "SJA-ELECTRIC"
+      ]
+    },
+    {
+      "id": "q_power_off",
+      "type": "question",
+      "question_ar": "هل تم فصل الكهرباء وأصبح المكان آمنًا؟",
+      "question_en": "Has the power been switched off and is the area safe?",
+      "answers": {
+        "yes": "check_response",
+        "no": "stay_back_call"
+      },
+      "sources": [
+        "NHS-ELECTRIC",
+        "SJA-ELECTRIC"
+      ]
+    },
+    {
+      "id": "stay_back_call",
+      "type": "instruction",
+      "title_ar": "ابتعد واتصل بخدمات الطوارئ",
+      "title_en": "Stay back and call emergency services.",
+      "description_ar": "لا تحاول لمس المصاب أو مصدر الكهرباء إذا لم تستطع عزل التيار بأمان.",
+      "description_en": "Do not touch the casualty or electrical source if you cannot safely isolate the power.",
+      "sets": {
+        "emergency_called": true
+      },
+      "terminal": true,
+      "sources": [
+        "NHS-ELECTRIC",
+        "SJA-ELECTRIC"
+      ]
+    },
+    {
+      "id": "check_response",
+      "type": "question",
+      "question_ar": "هل المصاب يستجيب لك؟",
+      "question_en": "Is the person responsive?",
+      "sets": {
+        "power_isolated": true
+      },
+      "answers": {
+        "yes": "check_breathing",
+        "no": "check_breathing"
+      },
+      "sources": [
+        "SJA-PRIMARY",
+        "SJA-ELECTRIC"
+      ]
+    },
+    {
+      "id": "check_breathing",
+      "type": "question",
+      "question_ar": "هل يتنفس بشكل طبيعي؟",
+      "question_en": "Is the person breathing normally?",
+      "hint_ar": "اللهاث المتقطع ليس تنفسًا طبيعيًا.",
+      "hint_en": "Gasping is not normal breathing.",
+      "answers": {
+        "yes": "q_conscious_state",
+        "no_or_gasping": "TRANSITION:CARDIAC_ARREST_CPR"
+      },
+      "sources": [
+        "SJA-PRIMARY"
+      ]
+    },
+    {
+      "id": "q_conscious_state",
+      "type": "question",
+      "question_ar": "هل هو واعٍ الآن؟",
+      "question_en": "Is the person conscious now?",
+      "answers": {
+        "yes": "check_burns",
+        "no": "TRANSITION:UNRESPONSIVE_BREATHING"
+      },
+      "sources": [
+        "SJA-PRIMARY"
+      ]
+    },
+    {
+      "id": "check_burns",
+      "type": "question",
+      "question_ar": "هل توجد حروق أو إصابات واضحة؟",
+      "question_en": "Are there visible burns or other injuries?",
+      "answers": {
+        "burn": "TRANSITION:BURNS",
+        "other_or_none": "seek_medical_help"
+      },
+      "sources": [
+        "SJA-ELECTRIC"
+      ]
+    },
+    {
+      "id": "seek_medical_help",
+      "type": "instruction",
+      "title_ar": "اطلب مساعدة طبية",
+      "title_en": "Seek medical help.",
+      "description_ar": "حتى إذا بدا المصاب بخير بعد الصدمة الكهربائية، اطلب تقييمًا طبيًا.",
+      "description_en": "Even if the person seems well after the electric shock, seek medical help.",
+      "terminal": true,
+      "sources": [
+        "NHS-ELECTRIC",
+        "SJA-ELECTRIC"
+      ]
+    }
+  ],
+  "transitions": {
+    "CARDIAC_ARREST_CPR": {
+      "target_flow": "cardiac_arrest_cpr",
+      "reason_ar": "المصاب غير مستجيب ولا يتنفس بشكل طبيعي",
+      "reason_en": "The person is unresponsive and not breathing normally",
+      "sources": [
+        "SJA-PRIMARY"
+      ]
+    },
+    "UNRESPONSIVE_BREATHING": {
+      "target_flow": "unresponsive_breathing",
+      "reason_ar": "المصاب غير مستجيب لكنه يتنفس بشكل طبيعي",
+      "reason_en": "The person is unresponsive but breathing normally",
+      "sources": [
+        "SJA-PRIMARY"
+      ]
+    },
+    "BURNS": {
+      "target_flow": "burns",
+      "reason_ar": "توجد حروق بعد فصل مصدر الكهرباء",
+      "reason_en": "There are burns after the electrical source has been isolated",
+      "carry_over": [
+        "cause = electrical"
+      ],
+      "sources": [
+        "SJA-ELECTRIC"
+      ]
+    }
+  },
+  "precedence_rules": [
+    {
+      "rule": "Rescuer safety comes first: do not touch a casualty who is still in contact with electricity.",
+      "sources": [
+        "NHS-ELECTRIC",
+        "SJA-ELECTRIC"
+      ]
+    },
+    {
+      "rule": "Once contact with electricity is safely broken, assess response and normal breathing.",
+      "sources": [
+        "SJA-ELECTRIC",
+        "SJA-PRIMARY"
+      ]
+    },
+    {
+      "rule": "If the person is unresponsive and not breathing normally, transition immediately to CPR.",
+      "sources": [
+        "SJA-PRIMARY"
+      ]
+    }
+  ],
+  "never_do": [
+    {
+      "rule_ar": "لا تلمس المصاب وهو ما زال ملامسًا لمصدر الكهرباء",
+      "rule_en": "Do not touch the casualty while they are still in contact with electricity",
+      "sources": [
+        "NHS-ELECTRIC",
+        "SJA-ELECTRIC"
+      ]
+    },
+    {
+      "rule_ar": "لا تعرّض نفسك للخطر لمحاولة فصل المصاب عن الكهرباء",
+      "rule_en": "Do not put yourself at risk trying to separate the casualty from electricity",
+      "sources": [
+        "SJA-ELECTRIC"
+      ]
+    },
+    {
+      "rule_ar": "لا تقترب من أسلاك كهرباء ساقطة أو مصدر جهد عالٍ",
+      "rule_en": "Do not approach fallen power lines or a high-voltage source",
+      "sources": [
+        "ARC-POWERLINES"
+      ]
+    }
+  ],
+  "open_items": [
+    "Verify emergency-service numbers per Iraqi region before release.",
+    "This MVP intentionally avoids detailed improvised-rescue techniques for separating a casualty from a live source; it prioritizes switching off power and rescuer safety.",
+    "High-voltage and fallen-power-line incidents should always remain a stay-back-and-call-emergency-services branch."
+  ]
+}

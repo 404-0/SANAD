@@ -1,0 +1,310 @@
+{
+  "id": "burns",
+  "schema_version": "1.0.0",
+  "name_ar": "الحروق والسلقات",
+  "name_en": "Burns and Scalds",
+  "last_reviewed": "2026-08-18",
+  "medical_disclaimer_required": true,
+  "emergency_number": {
+    "strategy": "REGION_CONFIGURED",
+    "number": null,
+    "requires_verification": true
+  },
+  "sources": {
+    "NHS-BURNS": {
+      "title": "NHS — Burns and scalds",
+      "url": "https://www.nhs.uk/conditions/burns-and-scalds/"
+    },
+    "NHS-FIRST-AID": {
+      "title": "NHS — First aid",
+      "url": "https://www.nhs.uk/tests-and-treatments/first-aid/"
+    },
+    "SJA-BURNS": {
+      "title": "St John Ambulance — Burns and scalds",
+      "url": "https://www.sja.org.uk/first-aid-advice/burns-and-scalds/"
+    },
+    "SJA-SEVERE-BURN": {
+      "title": "St John Ambulance — Severe burn",
+      "url": "https://www.sja.org.uk/first-aid-advice/severe-burn/"
+    },
+    "BRC-BURNS": {
+      "title": "British Red Cross — Burns",
+      "url": "https://www.redcross.org.uk/first-aid/learn-first-aid/burns"
+    }
+  },
+  "classification": {
+    "high_confidence_signals": [
+      {
+        "signal": "thermal burn or scald from flame, hot liquid, steam, or hot object",
+        "sources": [
+          "NHS-BURNS",
+          "SJA-BURNS",
+          "BRC-BURNS"
+        ]
+      }
+    ],
+    "severe_or_urgent_signals": [
+      {
+        "signal": "large or deep burn",
+        "sources": [
+          "NHS-BURNS",
+          "SJA-SEVERE-BURN"
+        ]
+      },
+      {
+        "signal": "burn to face, neck, hands, feet, joints, or genitals",
+        "sources": [
+          "NHS-BURNS"
+        ]
+      },
+      {
+        "signal": "white, charred, or leathery-looking skin",
+        "sources": [
+          "NHS-BURNS"
+        ]
+      },
+      {
+        "signal": "difficulty breathing or suspected smoke/fume inhalation",
+        "sources": [
+          "NHS-BURNS"
+        ]
+      },
+      {
+        "signal": "chemical burn",
+        "sources": [
+          "NHS-BURNS"
+        ]
+      },
+      {
+        "signal": "electrical burn",
+        "sources": [
+          "NHS-BURNS"
+        ]
+      }
+    ],
+    "allow_uncertain": true
+  },
+  "state": {
+    "source_removed": false,
+    "cooling_started": false,
+    "cooling_completed": false,
+    "stuck_clothing_present": false,
+    "severe_or_urgent": null,
+    "covered": false
+  },
+  "entry_logic": {
+    "start_node": "remove_source"
+  },
+  "nodes": [
+    {
+      "id": "remove_source",
+      "type": "instruction",
+      "title_ar": "أبعد المصاب عن مصدر الحرارة بأمان",
+      "title_en": "Move the person away from the heat source safely.",
+      "description_ar": "لا تعرّض نفسك للخطر أثناء ذلك.",
+      "description_en": "Do not put yourself in danger while doing so.",
+      "sets": {
+        "source_removed": true
+      },
+      "next": "cool_burn",
+      "sources": [
+        "NHS-BURNS"
+      ]
+    },
+    {
+      "id": "cool_burn",
+      "type": "instruction",
+      "title_ar": "برّد الحرق بماء جارٍ بارد أو فاتر لمدة 20 دقيقة على الأقل",
+      "title_en": "Cool the burn under cool or lukewarm running water for at least 20 minutes.",
+      "description_ar": "ابدأ التبريد بأسرع ما يمكن.",
+      "description_en": "Start cooling as quickly as possible.",
+      "sets": {
+        "cooling_started": true
+      },
+      "next": "remove_items",
+      "sources": [
+        "NHS-FIRST-AID",
+        "SJA-BURNS",
+        "BRC-BURNS"
+      ]
+    },
+    {
+      "id": "remove_items",
+      "type": "instruction",
+      "title_ar": "أزل المجوهرات والملابس القريبة إذا لم تكن ملتصقة",
+      "title_en": "Remove nearby jewellery and clothing if they are not stuck.",
+      "description_ar": "لا تنزع أي شيء ملتصق بالجلد.",
+      "description_en": "Do not remove anything stuck to the skin.",
+      "next": "q_special_burn",
+      "sources": [
+        "NHS-BURNS",
+        "NHS-FIRST-AID",
+        "SJA-BURNS"
+      ]
+    },
+    {
+      "id": "q_special_burn",
+      "type": "question",
+      "question_ar": "هل الحرق كهربائي أو كيميائي؟",
+      "question_en": "Is the burn electrical or chemical?",
+      "answers": {
+        "electrical": "TRANSITION:ELECTRICAL_INJURY",
+        "chemical": "TRANSITION:CHEMICAL_BURN",
+        "no": "q_severe"
+      },
+      "sources": [
+        "NHS-BURNS"
+      ]
+    },
+    {
+      "id": "q_severe",
+      "type": "question",
+      "question_ar": "هل الحرق كبير أو عميق، أو في الوجه/الرقبة/اليدين/القدمين/المفاصل/الأعضاء التناسلية، أو توجد صعوبة تنفس؟",
+      "question_en": "Is the burn large or deep, on the face/neck/hands/feet/joints/genitals, or is there difficulty breathing?",
+      "answers": {
+        "yes": "call_emergency",
+        "no": "finish_cooling"
+      },
+      "sources": [
+        "NHS-BURNS",
+        "SJA-SEVERE-BURN"
+      ]
+    },
+    {
+      "id": "call_emergency",
+      "type": "instruction",
+      "title_ar": "اتصل بخدمات الطوارئ أو اطلب رعاية عاجلة",
+      "title_en": "Call emergency services or seek urgent medical care.",
+      "description_ar": "استمر بتبريد الحرق أثناء طلب المساعدة إن أمكن.",
+      "description_en": "Keep cooling the burn while help is being arranged, if possible.",
+      "sets": {
+        "severe_or_urgent": true
+      },
+      "next": "finish_cooling",
+      "sources": [
+        "SJA-SEVERE-BURN",
+        "BRC-BURNS"
+      ]
+    },
+    {
+      "id": "finish_cooling",
+      "type": "instruction",
+      "title_ar": "أكمل التبريد حتى 20 دقيقة على الأقل",
+      "title_en": "Continue cooling for at least 20 minutes.",
+      "sets": {
+        "cooling_completed": true
+      },
+      "next": "cover_burn",
+      "sources": [
+        "NHS-FIRST-AID",
+        "SJA-BURNS",
+        "BRC-BURNS"
+      ]
+    },
+    {
+      "id": "cover_burn",
+      "type": "instruction",
+      "title_ar": "غطِّ الحرق بشكل فضفاض بعد التبريد",
+      "title_en": "Cover the burn loosely after cooling.",
+      "description_ar": "استخدم غلافًا بلاستيكيًا نظيفًا موضوعًا فوق الحرق أو ضمادًا نظيفًا غير وبرِي. لا تلفه بإحكام حول الطرف.",
+      "description_en": "Lay clean cling film over the burn or use a clean non-fluffy dressing. Do not wrap it tightly around a limb.",
+      "sets": {
+        "covered": true
+      },
+      "next": "monitor",
+      "sources": [
+        "NHS-BURNS",
+        "SJA-BURNS",
+        "BRC-BURNS"
+      ]
+    },
+    {
+      "id": "monitor",
+      "type": "monitor",
+      "title_ar": "راقب المصاب واطلب مساعدة طبية إذا كان الحرق خطيرًا أو ساءت الحالة",
+      "title_en": "Monitor the person and seek medical help if the burn is serious or the condition worsens.",
+      "terminal": true,
+      "sources": [
+        "NHS-BURNS",
+        "SJA-SEVERE-BURN"
+      ]
+    }
+  ],
+  "transitions": {
+    "ELECTRICAL_INJURY": {
+      "target_flow": "electrical_shock",
+      "reason_ar": "الحرق ناتج عن الكهرباء",
+      "reason_en": "The burn was caused by electricity",
+      "sources": [
+        "NHS-BURNS"
+      ]
+    },
+    "CHEMICAL_BURN": {
+      "target_flow": "chemical_burn",
+      "reason_ar": "الحرق ناتج عن مادة كيميائية",
+      "reason_en": "The burn was caused by a chemical",
+      "sources": [
+        "NHS-BURNS"
+      ]
+    }
+  },
+  "precedence_rules": [
+    {
+      "rule": "Cooling starts as soon as possible and should not be delayed by searching for dressings or creams.",
+      "sources": [
+        "NHS-FIRST-AID",
+        "SJA-BURNS",
+        "BRC-BURNS"
+      ]
+    },
+    {
+      "rule": "Do not remove clothing or jewellery that is stuck to the burn.",
+      "sources": [
+        "NHS-BURNS",
+        "SJA-BURNS"
+      ]
+    },
+    {
+      "rule": "Electrical and chemical burns are routed to dedicated flows because their first-aid requirements differ.",
+      "sources": [
+        "NHS-BURNS"
+      ]
+    }
+  ],
+  "never_do": [
+    {
+      "rule_ar": "لا تستخدم الثلج أو الماء المثلج",
+      "rule_en": "Do not use ice or iced water",
+      "sources": [
+        "NHS-BURNS"
+      ]
+    },
+    {
+      "rule_ar": "لا تضع كريمات أو مواد دهنية مثل الزبدة على الحرق",
+      "rule_en": "Do not apply creams or greasy substances such as butter",
+      "sources": [
+        "NHS-BURNS"
+      ]
+    },
+    {
+      "rule_ar": "لا تنزع الملابس أو المواد الملتصقة بالجلد",
+      "rule_en": "Do not remove clothing or material stuck to the skin",
+      "sources": [
+        "NHS-BURNS",
+        "SJA-BURNS"
+      ]
+    },
+    {
+      "rule_ar": "لا تفقع الفقاعات",
+      "rule_en": "Do not burst blisters",
+      "sources": [
+        "NHS-BURNS"
+      ]
+    }
+  ],
+  "open_items": [
+    "Verify emergency-service numbers per Iraqi region before release.",
+    "Chemical burns should use their own dedicated flow if included in the final 10 cases.",
+    "Electrical burns transition to the electrical-shock case."
+  ]
+}

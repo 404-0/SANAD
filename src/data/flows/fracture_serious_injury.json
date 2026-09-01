@@ -1,0 +1,310 @@
+{
+  "id": "fracture_serious_injury",
+  "schema_version": "1.0.0",
+  "name_ar": "كسر أو إصابة خطيرة بالعظام والمفاصل",
+  "name_en": "Fracture / Serious Bone or Joint Injury",
+  "last_reviewed": "2026-08-18",
+  "medical_disclaimer_required": true,
+  "emergency_number": {
+    "strategy": "REGION_CONFIGURED",
+    "number": null,
+    "requires_verification": true
+  },
+  "sources": {
+    "NHS-FIRST-AID": {
+      "title": "NHS — First aid: fractures",
+      "url": "https://www.nhs.uk/tests-and-treatments/first-aid/"
+    },
+    "NHS-BROKEN-LEG": {
+      "title": "NHS — Broken leg",
+      "url": "https://www.nhs.uk/conditions/broken-leg/"
+    },
+    "SJA-FRACTURES": {
+      "title": "St John Ambulance — Broken bones and fractures",
+      "url": "https://www.sja.org.uk/first-aid-advice/fractures-and-broken-bones/"
+    },
+    "SJA-SPINAL": {
+      "title": "St John Ambulance — Spinal injury",
+      "url": "https://www.sja.org.uk/first-aid-advice/spinal-injury/"
+    },
+    "ARC-FRACTURES": {
+      "title": "American Red Cross — Fractures",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/fractures"
+    },
+    "ARC-MBJ": {
+      "title": "American Red Cross — Muscle, Bone and Joint Injury",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/muscle-bone-joint-injury"
+    }
+  },
+  "classification": {
+    "high_confidence_signals": [
+      {
+        "signal": "bone visible or open fracture",
+        "sources": [
+          "NHS-BROKEN-LEG",
+          "SJA-FRACTURES"
+        ]
+      },
+      {
+        "signal": "limb visibly bent, twisted, shortened, or at an abnormal angle",
+        "sources": [
+          "NHS-BROKEN-LEG",
+          "SJA-FRACTURES",
+          "ARC-FRACTURES"
+        ]
+      },
+      {
+        "signal": "significant pain, swelling, bruising, or inability to use the injured part after trauma",
+        "sources": [
+          "SJA-FRACTURES",
+          "ARC-MBJ"
+        ]
+      }
+    ],
+    "ambiguous_signals": [
+      "bad fall with pain",
+      "swollen joint",
+      "cannot move an arm or leg",
+      "possible dislocation",
+      "heard a crack but no obvious deformity"
+    ],
+    "allow_uncertain": true,
+    "uncertain_behavior": {
+      "action": "TREAT_AS_POSSIBLE_FRACTURE",
+      "note": "If unsure whether an injury is a fracture or soft-tissue injury, treat it as a possible fracture until assessed.",
+      "sources": [
+        "NHS-FIRST-AID",
+        "ARC-FRACTURES"
+      ]
+    }
+  },
+  "state": {
+    "severe_bleeding": null,
+    "responsive": true,
+    "open_fracture": null,
+    "possible_spinal_or_pelvic_injury": null,
+    "injured_part_supported": false,
+    "cold_pack_applied": false,
+    "emergency_called": false
+  },
+  "entry_logic": {
+    "start_node": "q_immediate_threats"
+  },
+  "nodes": [
+    {
+      "id": "q_immediate_threats",
+      "type": "question",
+      "question_ar": "هل يوجد نزيف شديد، أو أن المصاب غير مستجيب ولا يتنفس بشكل طبيعي؟",
+      "question_en": "Is there severe bleeding, or is the person unresponsive and not breathing normally?",
+      "answers": {
+        "severe_bleeding": "TRANSITION:SEVERE_EXTERNAL_BLEEDING",
+        "not_breathing_normally": "TRANSITION:CARDIAC_ARREST_CPR",
+        "no": "do_not_move_or_straighten"
+      },
+      "sources": [
+        "NHS-FIRST-AID"
+      ]
+    },
+    {
+      "id": "do_not_move_or_straighten",
+      "type": "instruction",
+      "title_ar": "لا تحرك الجزء المصاب ولا تحاول تقويمه",
+      "title_en": "Do not move or straighten the injured part.",
+      "description_ar": "دع المصاب يبقى في الوضع الأكثر راحة، واسند الجزء المصاب كما هو.",
+      "description_en": "Keep the person in the most comfortable position and support the injured part as you find it.",
+      "next": "q_open_fracture",
+      "sources": [
+        "SJA-FRACTURES",
+        "ARC-FRACTURES",
+        "ARC-MBJ"
+      ]
+    },
+    {
+      "id": "q_open_fracture",
+      "type": "question",
+      "question_ar": "هل العظم ظاهر أو يوجد جرح مفتوح فوق مكان الإصابة؟",
+      "question_en": "Is bone visible, or is there an open wound over the injury?",
+      "answers": {
+        "yes": "open_fracture",
+        "no": "q_spine_pelvis"
+      },
+      "sources": [
+        "NHS-BROKEN-LEG",
+        "SJA-FRACTURES"
+      ]
+    },
+    {
+      "id": "open_fracture",
+      "type": "instruction",
+      "title_ar": "اتصل بخدمات الطوارئ الآن",
+      "title_en": "Call emergency services now.",
+      "description_ar": "لا تضغط على العظم البارز ولا تحاول إرجاعه. إذا كان هناك نزيف، اضغط حول الجرح بقطعة نظيفة دون الضغط على العظم.",
+      "description_en": "Do not press on or push back exposed bone. If there is bleeding, apply pressure around the wound with a clean dressing without pressing on the bone.",
+      "sets": {
+        "open_fracture": true,
+        "emergency_called": true
+      },
+      "next": "support_injury",
+      "sources": [
+        "NHS-BROKEN-LEG",
+        "SJA-FRACTURES"
+      ]
+    },
+    {
+      "id": "q_spine_pelvis",
+      "type": "question",
+      "question_ar": "هل توجد إصابة محتملة في الرقبة أو الظهر أو الحوض بعد سقوط أو حادث قوي؟",
+      "question_en": "Could there be a neck, back, or pelvic injury after a major fall or crash?",
+      "answers": {
+        "yes": "spinal_pelvic_caution",
+        "no": "support_injury"
+      },
+      "sources": [
+        "SJA-FRACTURES",
+        "SJA-SPINAL",
+        "NHS-FIRST-AID"
+      ]
+    },
+    {
+      "id": "spinal_pelvic_caution",
+      "type": "instruction",
+      "title_ar": "لا تحرك المصاب واتصل بخدمات الطوارئ",
+      "title_en": "Do not move the person. Call emergency services.",
+      "description_ar": "اطلب منه البقاء ثابتًا. لا تحرك الرأس أو الرقبة أو الجسم إلا إذا كان هناك خطر مباشر أو حاجة لحماية مجرى الهواء.",
+      "description_en": "Ask them to keep still. Avoid moving the head, neck, or body unless there is immediate danger or movement is needed to protect the airway.",
+      "sets": {
+        "possible_spinal_or_pelvic_injury": true,
+        "emergency_called": true
+      },
+      "terminal": true,
+      "sources": [
+        "SJA-SPINAL",
+        "SJA-FRACTURES"
+      ]
+    },
+    {
+      "id": "support_injury",
+      "type": "instruction",
+      "title_ar": "اسند الجزء المصاب في الوضع الموجود عليه",
+      "title_en": "Support the injured part in the position found.",
+      "description_ar": "استخدم اليدين أو وسادة أو ملابس مطوية لتقليل الحركة. لا تحاول إعادة العظم أو المفصل لمكانه.",
+      "description_en": "Use your hands, a pillow, or folded clothing to limit movement. Do not try to realign a bone or joint.",
+      "sets": {
+        "injured_part_supported": true
+      },
+      "next": "cold_pack_optional",
+      "sources": [
+        "SJA-FRACTURES",
+        "ARC-FRACTURES",
+        "ARC-MBJ"
+      ]
+    },
+    {
+      "id": "cold_pack_optional",
+      "type": "instruction",
+      "title_ar": "يمكن وضع كمادة باردة ملفوفة على الإصابة المغلقة",
+      "title_en": "For a closed injury, you may apply a wrapped cold pack.",
+      "description_ar": "لف الكمادة بقماش ولا تضع الثلج مباشرة على الجلد. أوقفها إذا زاد الألم.",
+      "description_en": "Wrap the cold pack in cloth; do not place ice directly on skin. Stop if it causes more pain.",
+      "sets": {
+        "cold_pack_applied": true
+      },
+      "next": "medical_assessment",
+      "sources": [
+        "ARC-FRACTURES",
+        "ARC-MBJ"
+      ]
+    },
+    {
+      "id": "medical_assessment",
+      "type": "instruction",
+      "title_ar": "اطلب تقييمًا طبيًا",
+      "title_en": "Seek medical assessment.",
+      "description_ar": "اطلب رعاية عاجلة إذا كان هناك تشوه واضح، ألم شديد، عظم ظاهر، فقدان إحساس، تغير لون الطرف، أو عدم القدرة على تحريكه.",
+      "description_en": "Seek urgent care for obvious deformity, severe pain, exposed bone, loss of sensation, abnormal limb color, or inability to use the injured part.",
+      "terminal": true,
+      "sources": [
+        "NHS-BROKEN-LEG",
+        "SJA-FRACTURES",
+        "ARC-FRACTURES"
+      ]
+    }
+  ],
+  "transitions": {
+    "SEVERE_EXTERNAL_BLEEDING": {
+      "target_flow": "severe_external_bleeding",
+      "reason_ar": "يوجد نزيف شديد يحتاج أولوية فورية",
+      "reason_en": "Severe bleeding requires immediate priority",
+      "sources": [
+        "NHS-FIRST-AID"
+      ]
+    },
+    "CARDIAC_ARREST_CPR": {
+      "target_flow": "cardiac_arrest_cpr",
+      "reason_ar": "المصاب غير مستجيب ولا يتنفس بشكل طبيعي",
+      "reason_en": "The person is unresponsive and not breathing normally",
+      "sources": [
+        "NHS-FIRST-AID"
+      ]
+    }
+  },
+  "precedence_rules": [
+    {
+      "rule": "Treat severe bleeding and absent/abnormal breathing before the suspected fracture.",
+      "sources": [
+        "NHS-FIRST-AID"
+      ]
+    },
+    {
+      "rule": "If unsure whether a bone or joint injury is a fracture, treat it as a possible fracture.",
+      "sources": [
+        "NHS-FIRST-AID",
+        "ARC-FRACTURES"
+      ]
+    },
+    {
+      "rule": "Open fractures and suspected neck, back, or pelvic injuries require urgent emergency assessment.",
+      "sources": [
+        "SJA-FRACTURES",
+        "SJA-SPINAL"
+      ]
+    }
+  ],
+  "never_do": [
+    {
+      "rule_ar": "لا تحاول تقويم العظم أو المفصل",
+      "rule_en": "Do not try to straighten or realign the bone or joint",
+      "sources": [
+        "ARC-FRACTURES",
+        "SJA-FRACTURES"
+      ]
+    },
+    {
+      "rule_ar": "لا تضغط مباشرة على عظم بارز من الجرح",
+      "rule_en": "Do not press directly on exposed bone",
+      "sources": [
+        "NHS-BROKEN-LEG"
+      ]
+    },
+    {
+      "rule_ar": "لا تحرك شخصًا يشتبه بإصابة الرقبة أو الظهر أو الحوض إلا لضرورة",
+      "rule_en": "Do not unnecessarily move someone with a suspected neck, back, or pelvic injury",
+      "sources": [
+        "SJA-SPINAL",
+        "SJA-FRACTURES"
+      ]
+    },
+    {
+      "rule_ar": "لا تضع الثلج مباشرة على الجلد",
+      "rule_en": "Do not place ice directly on the skin",
+      "sources": [
+        "ARC-MBJ"
+      ]
+    }
+  ],
+  "open_items": [
+    "Verify emergency-service numbers per Iraqi region before release.",
+    "This SANAD MVP does not teach improvised splinting; supporting the injured part and minimizing movement is simpler and safer for an untrained user.",
+    "Dislocations are handled with the same do-not-realign rule in this simplified case."
+  ]
+}

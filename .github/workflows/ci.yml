@@ -1,0 +1,30 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Structural check on the medical content first: every `next`, answer and
+      # cross-flow transition in the JSON must resolve. A broken reference here
+      # is a dead end in an emergency, so it fails the build.
+      - run: npm run validate
+
+      # Engine, matcher, classifier, voice, protocol quoting, .env loading and
+      # the speech providers. No network and no API key: the classifier tests
+      # use the mock provider and the speech tests use a local stub server.
+      - run: npm test
+
+      - run: npm run build

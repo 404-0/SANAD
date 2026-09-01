@@ -1,0 +1,345 @@
+@import 'tailwindcss';
+
+/*
+ * Tokens are indirected through raw CSS variables (--c-*) so the whole app can
+ * switch theme at runtime without rebuilding a single utility class.
+ * Light values come from the SANAD prototype walkthrough; dark is a matched
+ * low-glare set for night use, which is when a lot of emergencies happen.
+ */
+@theme {
+  --color-page: var(--c-page);
+  --color-app: var(--c-app);
+  --color-card: var(--c-card);
+  --color-panel: var(--c-panel);
+  --color-sub: var(--c-sub);
+  --color-sub-hover: var(--c-sub-hover);
+  --color-line: var(--c-line);
+
+  --color-ink: var(--c-ink);
+  --color-brand: var(--c-brand);
+  --color-brand-hover: var(--c-brand-hover);
+  --color-on-brand: var(--c-on-brand);
+  --color-muted: var(--c-muted);
+  --color-muted-2: var(--c-muted-2);
+  --color-muted-3: var(--c-muted-3);
+
+  --color-danger: var(--c-danger);
+  --color-danger-hover: var(--c-danger-hover);
+  --color-amber: var(--c-amber);
+  --color-safe: var(--c-safe);
+  --color-safe-ink: var(--c-safe-ink);
+
+  --color-tint-danger: var(--c-tint-danger);
+  --color-tint-warn: var(--c-tint-warn);
+  --color-tint-safe: var(--c-tint-safe);
+
+  --color-dot-past: var(--c-dot-past);
+  --color-dot-future: var(--c-dot-future);
+
+  --font-sans: 'IBM Plex Sans Arabic', 'IBM Plex Sans', system-ui, sans-serif;
+  --font-latin: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+:root,
+[data-theme='light'] {
+  --c-page: #efefec;
+  --c-app: #f6f6f3;
+  --c-card: #ffffff;
+  --c-panel: #fbfbf9;
+  --c-sub: #e6e6e1;
+  --c-sub-hover: #dcdcd5;
+  --c-line: #e0e0da;
+
+  --c-ink: #101b2b;
+  --c-brand: #16243b;
+  --c-brand-hover: #101b2b;
+  --c-on-brand: #fbfbf9;
+  --c-muted: #6e6e66;
+  --c-muted-2: #7c7c74;
+  --c-muted-3: #9a9a92;
+
+  --c-danger: #c0322a;
+  --c-danger-hover: #a82a23;
+  --c-amber: #b4801f;
+  --c-safe: #1c7a52;
+  --c-safe-ink: #0f5c3c;
+
+  --c-tint-danger: #fbedec;
+  --c-tint-warn: #fbf3e2;
+  --c-tint-safe: #f3faf6;
+
+  --c-dot-past: #b9b9b0;
+  --c-dot-future: #deded7;
+
+  --shadow-card: 0 1px 2px rgba(16, 27, 43, 0.05), 0 8px 24px rgba(16, 27, 43, 0.04);
+  --shadow-lift: 0 8px 22px rgba(16, 27, 43, 0.1);
+  --shadow-modal: 0 18px 50px rgba(16, 27, 43, 0.22);
+  --scrim: rgba(16, 27, 43, 0.28);
+}
+
+[data-theme='dark'] {
+  --c-page: #0e1218;
+  --c-app: #12171f;
+  --c-card: #1a212b;
+  --c-panel: #161d26;
+  --c-sub: #232c38;
+  --c-sub-hover: #2c3745;
+  --c-line: #29323f;
+
+  --c-ink: #eef3f9;
+  /* The single strong action inverts with the theme so it always reads as
+     "this is the one thing to press". */
+  --c-brand: #e9eff7;
+  --c-brand-hover: #ffffff;
+  --c-on-brand: #10151c;
+  --c-muted: #a3b0bf;
+  --c-muted-2: #8b98a8;
+  --c-muted-3: #6f7d8d;
+
+  --c-danger: #e0554b;
+  --c-danger-hover: #ef6a60;
+  --c-amber: #e3a742;
+  --c-safe: #3fae7d;
+  --c-safe-ink: #7fe0b4;
+
+  --c-tint-danger: #2a1a1a;
+  --c-tint-warn: #2a2318;
+  --c-tint-safe: #16261f;
+
+  --c-dot-past: #3d4956;
+  --c-dot-future: #262f3b;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.28);
+  --shadow-lift: 0 8px 22px rgba(0, 0, 0, 0.45);
+  --shadow-modal: 0 18px 50px rgba(0, 0, 0, 0.6);
+  --scrim: rgba(4, 7, 11, 0.62);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--c-page);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overscroll-behavior-y: none;
+    transition:
+      background-color 240ms ease,
+      color 240ms ease;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--c-danger);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .font-latin {
+    font-family: var(--font-latin);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-lift {
+    box-shadow: var(--shadow-lift);
+  }
+  .shadow-modal {
+    box-shadow: var(--shadow-modal);
+  }
+  .shadow-brand {
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--c-brand) 22%, transparent);
+  }
+  .shadow-danger {
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--c-danger) 28%, transparent);
+  }
+  .bg-scrim {
+    background: var(--scrim);
+  }
+
+  /* Colour and surface changes animate; layout does not. */
+  .themed {
+    transition:
+      background-color 240ms ease,
+      border-color 240ms ease,
+      color 240ms ease;
+  }
+
+  .fade-in {
+    animation: fade-in 200ms ease-out both;
+  }
+
+  /*
+   * One step replacing another. Vertical rather than horizontal, so it reads
+   * the same in RTL and LTR: forward rises into place, back settles down.
+   */
+  .step-in {
+    animation: step-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .step-in-back {
+    animation: step-in-back 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes step-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.995);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes step-in-back {
+    from {
+      opacity: 0;
+      transform: translateY(-12px) scale(0.995);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Sound coming out of the app, drawn rather than described. */
+  .wave span {
+    display: inline-block;
+    width: 3px;
+    border-radius: 2px;
+    background: currentColor;
+    animation: wave 900ms ease-in-out infinite;
+  }
+  .wave span:nth-child(1) { height: 8px; animation-delay: 0ms; }
+  .wave span:nth-child(2) { height: 14px; animation-delay: 120ms; }
+  .wave span:nth-child(3) { height: 20px; animation-delay: 240ms; }
+  .wave span:nth-child(4) { height: 12px; animation-delay: 360ms; }
+  .wave span:nth-child(5) { height: 7px; animation-delay: 480ms; }
+
+  @keyframes wave {
+    0%, 100% { transform: scaleY(0.4); opacity: 0.5; }
+    50% { transform: scaleY(1); opacity: 1; }
+  }
+
+  .press {
+    transition: transform 120ms ease;
+  }
+  .press:active {
+    transform: scale(0.985);
+  }
+
+  .ring-countdown {
+    transition: stroke-dashoffset 500ms linear;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .pulse-soft {
+    animation: pulse-soft 1.6s ease-in-out infinite;
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.55;
+    }
+  }
+
+  /* Assistant "thinking" dots. */
+  .dot-typing span {
+    animation: dot-typing 1.1s ease-in-out infinite;
+  }
+  .dot-typing span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .dot-typing span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes dot-typing {
+    0%,
+    60%,
+    100% {
+      opacity: 0.25;
+      transform: translateY(0);
+    }
+    30% {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+  }
+
+  /*
+   * Language swap. Browsers that support view transitions get a real crossfade
+   * of the whole document, which hides the RTL/LTR reflow completely; the rest
+   * get this blur-and-fade, which hides it well enough.
+   */
+  .lang-swapping {
+    opacity: 0.15;
+    filter: blur(3px);
+  }
+
+  .lang-swap-root {
+    transition:
+      opacity 170ms ease,
+      filter 170ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in,
+    .pulse-soft,
+    .dot-typing span,
+    .step-in,
+    .step-in-back,
+    .wave span {
+      animation: none !important;
+    }
+    .press:active {
+      transform: none;
+    }
+    .lang-swap-root,
+    body,
+    .themed {
+      transition: none !important;
+    }
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

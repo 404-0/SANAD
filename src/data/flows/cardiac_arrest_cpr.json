@@ -1,0 +1,387 @@
+{
+  "id": "cardiac_arrest_cpr",
+  "schema_version": "1.0.0",
+  "name_ar": "توقف القلب / لا يتنفس بشكل طبيعي",
+  "name_en": "Cardiac Arrest / Not Breathing Normally",
+  "last_reviewed": "2026-08-18",
+  "medical_disclaimer_required": true,
+  "emergency_number": {
+    "strategy": "REGION_CONFIGURED",
+    "number": null,
+    "requires_verification": true
+  },
+  "sources": {
+    "SJA-ADULT-CPR": {
+      "title": "St John Ambulance — How to do CPR",
+      "url": "https://www.sja.org.uk/first-aid-advice/cpr/"
+    },
+    "SJA-CHILD-CPR": {
+      "title": "St John Ambulance — How to do CPR on a child",
+      "url": "https://www.sja.org.uk/first-aid-advice/child-cpr/"
+    },
+    "SJA-AED": {
+      "title": "St John Ambulance — How to use a defibrillator (AED)",
+      "url": "https://www.sja.org.uk/first-aid-advice/how-to-use-a-defibrillator/"
+    },
+    "ARC-CPR": {
+      "title": "American Red Cross — CPR Steps",
+      "url": "https://www.redcross.org/take-a-class/cpr/performing-cpr/cpr-steps"
+    },
+    "NHS-CHILD-CPR": {
+      "title": "NHS — How to resuscitate a child",
+      "url": "https://www.nhs.uk/baby/first-aid-and-safety/first-aid/how-to-resuscitate-a-child/"
+    }
+  },
+  "example_user_descriptions": {
+    "ar": [
+      "طاح وما يتنفس",
+      "ما يرد علي وماكو نفس",
+      "فاقد الوعي ويتنفس بس لهاث",
+      "صدره ما يتحرك",
+      "ما أقدر أصحيه وما دا يتنفس",
+      "وقع فجأة وصار ما يتنفس طبيعي",
+      "قاعد يلهث بس ما يرد",
+      "نبضه ما اعرف بس ما يتنفس",
+      "فقد الوعي وماكو تنفس طبيعي",
+      "طاح قدامي وما يتحرك"
+    ],
+    "en": [
+      "He collapsed and isn't breathing.",
+      "She won't respond and is only gasping.",
+      "He is unconscious and not breathing normally.",
+      "She collapsed and her chest isn't moving.",
+      "He won't wake up and I can't hear normal breathing."
+    ]
+  },
+  "classification": {
+    "high_confidence_signals": [
+      {
+        "signal": "unresponsive AND not breathing normally",
+        "sources": [
+          "SJA-ADULT-CPR",
+          "ARC-CPR"
+        ]
+      },
+      {
+        "signal": "unresponsive AND only gasping",
+        "sources": [
+          "ARC-CPR"
+        ]
+      }
+    ],
+    "ambiguous_signals": [
+      "collapsed",
+      "not moving",
+      "unconscious",
+      "breathing status unknown"
+    ],
+    "allow_uncertain": true,
+    "uncertain_behavior": {
+      "action": "ASK_RESPONSE_AND_BREATHING",
+      "goto": "q_breathing_normal"
+    }
+  },
+  "state": {
+    "responsive": false,
+    "breathing_normally": false,
+    "age_group": null,
+    "emergency_called": false,
+    "aed_requested": false,
+    "aed_attached": false,
+    "cpr_started": false
+  },
+  "entry_logic": {
+    "start_node": "q_breathing_normal"
+  },
+  "nodes": [
+    {
+      "id": "q_breathing_normal",
+      "type": "question",
+      "question_ar": "هل يتنفس بشكل طبيعي؟",
+      "question_en": "Is the person breathing normally?",
+      "hint_ar": "اللهاث المتقطع أو التنفس غير المنتظم ليس تنفسًا طبيعيًا.",
+      "hint_en": "Gasping or irregular breathing is not normal breathing.",
+      "answers": {
+        "yes": "TRANSITION:UNRESPONSIVE_BREATHING",
+        "no_or_gasping": "call_emergency"
+      },
+      "sources": [
+        "ARC-CPR",
+        "SJA-ADULT-CPR"
+      ]
+    },
+    {
+      "id": "call_emergency",
+      "type": "instruction",
+      "title_ar": "اتصل بخدمات الطوارئ الآن واطلب جهاز AED إن توفر",
+      "title_en": "Call emergency services now and ask for an AED if available.",
+      "description_ar": "استخدم مكبر الصوت وابدأ الإنعاش دون تأخير.",
+      "description_en": "Use speakerphone and start CPR without delay.",
+      "sets": {
+        "emergency_called": true,
+        "aed_requested": true
+      },
+      "next": "q_age_group",
+      "sources": [
+        "SJA-ADULT-CPR",
+        "SJA-CHILD-CPR",
+        "ARC-CPR"
+      ]
+    },
+    {
+      "id": "q_age_group",
+      "type": "question",
+      "question_ar": "هل المصاب بالغ، طفل فوق سنة، أم رضيع أقل من سنة؟",
+      "question_en": "Is the casualty an adult, a child over 1 year, or an infant under 1 year?",
+      "answers": {
+        "adult": "adult_cpr",
+        "child": "child_initial_breaths",
+        "infant": "infant_initial_breaths"
+      },
+      "sources": [
+        "SJA-ADULT-CPR",
+        "SJA-CHILD-CPR",
+        "NHS-CHILD-CPR"
+      ]
+    },
+    {
+      "id": "adult_cpr",
+      "type": "instruction",
+      "title_ar": "ابدأ ضغطات الصدر الآن",
+      "title_en": "Start chest compressions now.",
+      "description_ar": "ضع كعب يدك في منتصف الصدر واليد الأخرى فوقها. اضغط بعمق 5–6 سم بسرعة 100–120 ضغطة بالدقيقة.",
+      "description_en": "Place the heel of one hand in the center of the chest with the other hand on top. Compress 5–6 cm deep at 100–120 per minute.",
+      "sets": {
+        "age_group": "adult",
+        "cpr_started": true
+      },
+      "next": "adult_breath_option",
+      "sources": [
+        "SJA-ADULT-CPR",
+        "ARC-CPR"
+      ]
+    },
+    {
+      "id": "adult_breath_option",
+      "type": "question",
+      "question_ar": "هل تستطيع أو تعرف إعطاء أنفاس إنقاذية؟",
+      "question_en": "Are you able and willing to give rescue breaths?",
+      "answers": {
+        "yes": "adult_30_2",
+        "no": "adult_hands_only"
+      },
+      "sources": [
+        "SJA-ADULT-CPR"
+      ]
+    },
+    {
+      "id": "adult_30_2",
+      "type": "loop",
+      "title_ar": "كرر 30 ضغطة ثم نفسين",
+      "title_en": "Repeat 30 compressions, then 2 breaths.",
+      "description_ar": "كل نفس حوالي ثانية واحدة ويكفي لارتفاع الصدر. قلّل التوقف عن الضغطات قدر الإمكان.",
+      "description_en": "Each breath should last about 1 second and make the chest rise. Minimize interruptions.",
+      "next": "q_aed_available",
+      "sources": [
+        "SJA-ADULT-CPR",
+        "ARC-CPR"
+      ]
+    },
+    {
+      "id": "adult_hands_only",
+      "type": "loop",
+      "title_ar": "استمر بضغطات الصدر دون توقف",
+      "title_en": "Continue continuous chest compressions.",
+      "description_ar": "اضغط بسرعة 100–120 ضغطة بالدقيقة.",
+      "description_en": "Compress at 100–120 per minute.",
+      "next": "q_aed_available",
+      "sources": [
+        "SJA-ADULT-CPR"
+      ]
+    },
+    {
+      "id": "child_initial_breaths",
+      "type": "instruction",
+      "title_ar": "للطفل: أعطِ 5 أنفاس إنقاذية أولًا",
+      "title_en": "For a child: give 5 initial rescue breaths.",
+      "description_ar": "اجعل كل نفس كافيًا لارتفاع الصدر.",
+      "description_en": "Make each breath sufficient to visibly raise the chest.",
+      "sets": {
+        "age_group": "child",
+        "cpr_started": true
+      },
+      "next": "child_cpr",
+      "sources": [
+        "SJA-CHILD-CPR",
+        "NHS-CHILD-CPR"
+      ]
+    },
+    {
+      "id": "child_cpr",
+      "type": "loop",
+      "title_ar": "للطفل: 30 ضغطة ثم نفسين",
+      "title_en": "For a child: 30 compressions, then 2 breaths.",
+      "description_ar": "استخدم يدًا واحدة في منتصف الصدر. اضغط تقريبًا ثلث عمق الصدر، حوالي 5 سم، بسرعة 100–120 ضغطة بالدقيقة.",
+      "description_en": "Use one hand in the center of the chest. Compress about one-third of chest depth, around 5 cm, at 100–120 per minute.",
+      "next": "q_aed_available",
+      "sources": [
+        "SJA-CHILD-CPR",
+        "NHS-CHILD-CPR"
+      ]
+    },
+    {
+      "id": "infant_initial_breaths",
+      "type": "instruction",
+      "title_ar": "للرضيع: أعطِ 5 أنفاس إنقاذية أولًا",
+      "title_en": "For an infant: give 5 initial rescue breaths.",
+      "description_ar": "اجعل كل نفس لطيفًا وكافيًا لارتفاع الصدر.",
+      "description_en": "Give each breath gently, just enough to make the chest rise.",
+      "sets": {
+        "age_group": "infant",
+        "cpr_started": true
+      },
+      "next": "infant_cpr",
+      "sources": [
+        "NHS-CHILD-CPR"
+      ]
+    },
+    {
+      "id": "infant_cpr",
+      "type": "loop",
+      "title_ar": "للرضيع: 30 ضغطة ثم نفسين",
+      "title_en": "For an infant: 30 compressions, then 2 breaths.",
+      "description_ar": "استخدم إصبعين على عظم الصدر. اضغط حوالي 4 سم، أي قرابة ثلث عمق الصدر، بسرعة 100–120 ضغطة بالدقيقة.",
+      "description_en": "Use two fingers on the breastbone. Compress about 4 cm, roughly one-third of chest depth, at 100–120 per minute.",
+      "next": "q_aed_available",
+      "sources": [
+        "NHS-CHILD-CPR"
+      ]
+    },
+    {
+      "id": "q_aed_available",
+      "type": "question",
+      "question_ar": "هل وصل جهاز AED؟",
+      "question_en": "Is an AED available?",
+      "answers": {
+        "yes": "use_aed",
+        "no": "continue_cpr"
+      },
+      "sources": [
+        "SJA-AED",
+        "SJA-ADULT-CPR",
+        "SJA-CHILD-CPR"
+      ]
+    },
+    {
+      "id": "use_aed",
+      "type": "instruction",
+      "title_ar": "شغّل جهاز AED واتبع تعليماته الصوتية",
+      "title_en": "Turn on the AED and follow its voice prompts.",
+      "description_ar": "لا تلمس المصاب أثناء تحليل الجهاز أو إعطاء الصدمة. استأنف الضغطات عندما يطلب منك الجهاز.",
+      "description_en": "Do not touch the casualty while the AED analyzes or delivers a shock. Resume compressions when instructed.",
+      "sets": {
+        "aed_attached": true
+      },
+      "next": "continue_cpr",
+      "sources": [
+        "SJA-AED",
+        "SJA-CHILD-CPR"
+      ]
+    },
+    {
+      "id": "continue_cpr",
+      "type": "monitor",
+      "title_ar": "استمر بالإنعاش",
+      "title_en": "Continue CPR.",
+      "description_ar": "استمر حتى تصل خدمات الطوارئ وتتولى الحالة، أو يعود التنفس الطبيعي، أو تصبح غير قادر على الاستمرار.",
+      "description_en": "Continue until emergency professionals take over, normal breathing returns, or you are physically unable to continue.",
+      "watch_for": [
+        {
+          "signal": "normal_breathing_returns",
+          "goto": "TRANSITION:UNRESPONSIVE_BREATHING"
+        },
+        {
+          "signal": "emergency_services_take_over",
+          "goto": "END"
+        },
+        {
+          "signal": "rescuer_exhausted",
+          "goto": "END"
+        }
+      ],
+      "sources": [
+        "SJA-ADULT-CPR",
+        "SJA-CHILD-CPR",
+        "SJA-AED"
+      ]
+    }
+  ],
+  "transitions": {
+    "UNRESPONSIVE_BREATHING": {
+      "target_flow": "unresponsive_breathing",
+      "reason_ar": "عاد المصاب للتنفس بشكل طبيعي لكنه ما زال غير مستجيب",
+      "reason_en": "Normal breathing returned but the person remains unresponsive",
+      "sources": [
+        "SJA-AED",
+        "SJA-CHILD-CPR"
+      ]
+    }
+  },
+  "precedence_rules": [
+    {
+      "rule": "Gasping is not normal breathing; an unresponsive person who is not breathing normally requires CPR.",
+      "sources": [
+        "ARC-CPR",
+        "SJA-ADULT-CPR"
+      ]
+    },
+    {
+      "rule": "Call emergency services and begin CPR immediately; use speakerphone if alone.",
+      "sources": [
+        "SJA-ADULT-CPR",
+        "ARC-CPR"
+      ]
+    },
+    {
+      "rule": "Use an AED as soon as it is available and follow its prompts.",
+      "sources": [
+        "ARC-CPR",
+        "SJA-AED"
+      ]
+    },
+    {
+      "rule": "For adults, continuous chest compressions are acceptable when the rescuer is unable or unwilling to give rescue breaths.",
+      "sources": [
+        "SJA-ADULT-CPR"
+      ]
+    }
+  ],
+  "never_do": [
+    {
+      "rule_ar": "لا تعتبر اللهاث المتقطع تنفسًا طبيعيًا",
+      "rule_en": "Do not treat gasping as normal breathing",
+      "sources": [
+        "ARC-CPR"
+      ]
+    },
+    {
+      "rule_ar": "لا تترك المصاب لتبحث عن جهاز AED إذا كنت وحدك",
+      "rule_en": "Do not leave the casualty to search for an AED if you are alone",
+      "sources": [
+        "SJA-ADULT-CPR"
+      ]
+    },
+    {
+      "rule_ar": "لا تلمس المصاب أثناء تحليل جهاز AED أو أثناء إعطاء الصدمة",
+      "rule_en": "Do not touch the casualty while the AED is analyzing or delivering a shock",
+      "sources": [
+        "SJA-AED"
+      ]
+    }
+  ],
+  "open_items": [
+    "Verify emergency-service numbers per Iraqi region before release.",
+    "This SANAD MVP uses simple single-rescuer layperson CPR flows. More advanced paediatric BLS ratios are intentionally excluded.",
+    "If SANAD later supports drowning or other respiratory-cause arrests as dedicated cases, route them to a specialized CPR entry because initial rescue-breath priorities may differ."
+  ]
+}

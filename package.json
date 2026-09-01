@@ -1,0 +1,39 @@
+{
+  "name": "sanad-phase2",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "SANAD \u2014 JSON-driven emergency first-aid guide (engine + UI + AI classifier)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "validate": "node scripts/validate-flows.mjs",
+    "test:flows": "node scripts/traverse-flows.mjs",
+    "test:match": "node scripts/test-matcher.mjs",
+    "test:ui": "npm run build && node scripts/ui-smoke.mjs",
+    "test": "npm run validate && npm run test:flows && npm run test:match && npm run test:ai && npm run test:voice && npm run test:participate && npm run test:env && npm run test:tts",
+    "test:env": "node scripts/test-env.mjs",
+    "test:tts": "node scripts/test-tts.mjs",
+    "api": "node server/classify.mjs",
+    "test:ai": "node scripts/test-classifier.mjs",
+    "test:voice": "node scripts/test-voice.mjs",
+    "test:offline": "npm run build && node scripts/test-offline.mjs",
+    "tts": "node scripts/generate-audio.mjs",
+    "voices": "node scripts/audition-voices.mjs",
+    "test:participate": "node scripts/test-participate.mjs",
+    "check": "node scripts/check-setup.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "playwright": "^1.49.0",
+    "tailwindcss": "^4.0.0",
+    "vite": "^5.4.11",
+    "vite-plugin-pwa": "^0.20.5"
+  }
+}

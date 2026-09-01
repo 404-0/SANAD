@@ -1,0 +1,271 @@
+{
+  "id": "seizure",
+  "schema_version": "1.0.0",
+  "name_ar": "النوبة / التشنج",
+  "name_en": "Seizure",
+  "last_reviewed": "2026-08-18",
+  "medical_disclaimer_required": true,
+  "emergency_number": {
+    "strategy": "REGION_CONFIGURED",
+    "number": null,
+    "requires_verification": true
+  },
+  "sources": {
+    "NHS-SEIZURE": {
+      "title": "NHS — What to do if someone has a seizure (fit)",
+      "url": "https://www.nhs.uk/symptoms/what-to-do-if-someone-has-a-seizure-fit/"
+    },
+    "SJA-SEIZURE": {
+      "title": "St John Ambulance — Seizure First Aid",
+      "url": "https://www.sja.org.uk/first-aid-advice/seizure/"
+    },
+    "ARC-SEIZURE": {
+      "title": "American Red Cross — Seizures: Causes, Symptoms, and Types",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/seizures"
+    }
+  },
+  "classification": {
+    "high_confidence_signals": [
+      {
+        "signal": "sudden loss of responsiveness with jerking or uncontrolled movements",
+        "sources": [
+          "SJA-SEIZURE",
+          "ARC-SEIZURE"
+        ]
+      },
+      {
+        "signal": "rigid body followed by convulsions",
+        "sources": [
+          "SJA-SEIZURE"
+        ]
+      }
+    ],
+    "ambiguous_signals": [
+      "collapsed",
+      "shaking",
+      "staring episode",
+      "not responding",
+      "twitching"
+    ],
+    "allow_uncertain": true
+  },
+  "state": {
+    "seizure_active": true,
+    "timer_started": false,
+    "duration_minutes": 0,
+    "first_seizure": null,
+    "repeated_without_recovery": false,
+    "serious_injury": false,
+    "breathing_normally_after": null,
+    "emergency_called": false
+  },
+  "entry_logic": {
+    "start_node": "protect_person"
+  },
+  "nodes": [
+    {
+      "id": "protect_person",
+      "type": "instruction",
+      "title_ar": "أبعد الأشياء الخطرة من حوله",
+      "title_en": "Move dangerous objects away.",
+      "description_ar": "لا تحرك المصاب إلا إذا كان في خطر مباشر.",
+      "description_en": "Do not move the person unless they are in immediate danger.",
+      "next": "protect_head",
+      "sources": [
+        "NHS-SEIZURE",
+        "SJA-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    },
+    {
+      "id": "protect_head",
+      "type": "instruction",
+      "title_ar": "ضع شيئًا لينًا تحت رأسه",
+      "title_en": "Cushion their head.",
+      "description_ar": "استخدم منشفة ملفوفة أو وسادة إن توفرت.",
+      "description_en": "Use a rolled towel or pillow if available.",
+      "next": "start_timer",
+      "sources": [
+        "NHS-SEIZURE",
+        "SJA-SEIZURE"
+      ]
+    },
+    {
+      "id": "start_timer",
+      "type": "instruction",
+      "title_ar": "ابدأ حساب مدة النوبة",
+      "title_en": "Start timing the seizure.",
+      "description_ar": "سجّل وقت البداية والنهاية.",
+      "description_en": "Note when the seizure starts and ends.",
+      "sets": {
+        "timer_started": true
+      },
+      "next": "monitor_active_seizure",
+      "sources": [
+        "NHS-SEIZURE",
+        "SJA-SEIZURE"
+      ]
+    },
+    {
+      "id": "monitor_active_seizure",
+      "type": "monitor",
+      "title_ar": "لا تمسكه ولا تضع شيئًا في فمه",
+      "title_en": "Do not restrain them or put anything in their mouth.",
+      "description_ar": "ابقَ معه وانتظر توقف التشنجات مع إبقاء المكان آمنًا.",
+      "description_en": "Stay with them and keep the area safe while the seizure runs its course.",
+      "watch_for": [
+        {
+          "signal": "seizure_stops",
+          "goto": "check_breathing_after"
+        },
+        {
+          "signal": "duration_over_5_minutes",
+          "goto": "call_emergency"
+        },
+        {
+          "signal": "another_seizure_without_recovery",
+          "goto": "call_emergency"
+        },
+        {
+          "signal": "serious_injury",
+          "goto": "call_emergency"
+        }
+      ],
+      "sources": [
+        "NHS-SEIZURE",
+        "SJA-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    },
+    {
+      "id": "call_emergency",
+      "type": "instruction",
+      "title_ar": "اتصل بخدمات الطوارئ الآن",
+      "title_en": "Call emergency services now.",
+      "description_ar": "اتصل إذا كانت أول نوبة، استمرت أكثر من 5 دقائق، تكررت دون استعادة الوعي، حدثت إصابة خطيرة، أو ظهرت صعوبة تنفس.",
+      "description_en": "Call if this is the first seizure, it lasts more than 5 minutes, repeats without recovery, causes serious injury, or breathing is difficult.",
+      "sets": {
+        "emergency_called": true
+      },
+      "next": "monitor_active_seizure",
+      "sources": [
+        "NHS-SEIZURE",
+        "SJA-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    },
+    {
+      "id": "check_breathing_after",
+      "type": "question",
+      "question_ar": "بعد توقف التشنجات: هل يتنفس بشكل طبيعي؟",
+      "question_en": "After the seizure stops: is the person breathing normally?",
+      "answers": {
+        "yes_but_unresponsive": "TRANSITION:UNRESPONSIVE_BREATHING",
+        "yes_and_awake": "recovery_monitor",
+        "no_or_gasping": "TRANSITION:CARDIAC_ARREST_CPR"
+      },
+      "sources": [
+        "NHS-SEIZURE",
+        "SJA-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    },
+    {
+      "id": "recovery_monitor",
+      "type": "instruction",
+      "title_ar": "ابقَ معه وطمئنه حتى يتعافى",
+      "title_en": "Stay with them and reassure them until they recover.",
+      "description_ar": "قد يشعر بالنعاس أو الارتباك بعد النوبة. لا تعطه طعامًا أو شرابًا حتى يتعافى تمامًا.",
+      "description_en": "They may be drowsy or confused afterward. Do not give food or drink until they have fully recovered.",
+      "terminal": true,
+      "sources": [
+        "NHS-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    }
+  ],
+  "transitions": {
+    "UNRESPONSIVE_BREATHING": {
+      "target_flow": "unresponsive_breathing",
+      "reason_ar": "النوبة توقفت، لكنه لا يستجيب ويتنفس بشكل طبيعي",
+      "reason_en": "The seizure stopped, but the person is unresponsive and breathing normally",
+      "sources": [
+        "NHS-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    },
+    "CARDIAC_ARREST_CPR": {
+      "target_flow": "cardiac_arrest_cpr",
+      "reason_ar": "بعد النوبة لا يتنفس بشكل طبيعي",
+      "reason_en": "After the seizure, the person is not breathing normally",
+      "sources": [
+        "SJA-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    }
+  },
+  "precedence_rules": [
+    {
+      "rule": "Protect the person from injury and allow the seizure to run its course; do not restrain them.",
+      "sources": [
+        "SJA-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    },
+    {
+      "rule": "Do not put anything in the person's mouth.",
+      "sources": [
+        "NHS-SEIZURE",
+        "SJA-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    },
+    {
+      "rule": "Time the seizure and escalate if it lasts more than 5 minutes or meets other emergency criteria.",
+      "sources": [
+        "NHS-SEIZURE",
+        "SJA-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    }
+  ],
+  "never_do": [
+    {
+      "rule_ar": "لا تثبّت المصاب بالقوة",
+      "rule_en": "Do not restrain the person",
+      "sources": [
+        "SJA-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    },
+    {
+      "rule_ar": "لا تضع أي شيء في فمه، حتى أصابعك",
+      "rule_en": "Do not put anything in their mouth, including your fingers",
+      "sources": [
+        "NHS-SEIZURE",
+        "SJA-SEIZURE",
+        "ARC-SEIZURE"
+      ]
+    },
+    {
+      "rule_ar": "لا تعطِه طعامًا أو شرابًا حتى يتعافى تمامًا",
+      "rule_en": "Do not give food or drink until fully recovered",
+      "sources": [
+        "NHS-SEIZURE"
+      ]
+    },
+    {
+      "rule_ar": "لا تحركه إلا إذا كان في خطر مباشر",
+      "rule_en": "Do not move them unless they are in immediate danger",
+      "sources": [
+        "NHS-SEIZURE",
+        "SJA-SEIZURE"
+      ]
+    }
+  ],
+  "open_items": [
+    "Verify emergency-service numbers per Iraqi region before release.",
+    "This MVP does not attempt to diagnose epilepsy or the cause of the seizure.",
+    "Febrile seizures in infants/children can be added later as a dedicated flow if needed."
+  ]
+}

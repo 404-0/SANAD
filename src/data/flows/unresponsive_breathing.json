@@ -1,0 +1,280 @@
+{
+  "id": "unresponsive_breathing",
+  "schema_version": "1.0.0",
+  "name_ar": "فاقد الوعي لكنه يتنفس",
+  "name_en": "Unresponsive but Breathing Normally",
+  "last_reviewed": "2026-08-18",
+  "medical_disclaimer_required": true,
+  "emergency_number": {
+    "strategy": "REGION_CONFIGURED",
+    "number": null,
+    "requires_verification": true
+  },
+  "sources": {
+    "NHS-RP": {
+      "title": "NHS — Recovery position",
+      "url": "https://www.nhs.uk/tests-and-treatments/first-aid/recovery-position/"
+    },
+    "NHS-INCIDENT": {
+      "title": "NHS — After an incident",
+      "url": "https://www.nhs.uk/tests-and-treatments/first-aid/after-an-accident/"
+    },
+    "NHS-CPR": {
+      "title": "NHS — CPR",
+      "url": "https://www.nhs.uk/tests-and-treatments/first-aid/cpr/"
+    },
+    "ARC-UNRESPONSIVE": {
+      "title": "American Red Cross — First Aid for Someone Unresponsive & Breathing",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/unresponsive-and-breathing-person"
+    },
+    "SJA-RP": {
+      "title": "St John Ambulance — Recovery position",
+      "url": "https://www.sja.org.uk/first-aid-advice/recovery-position/"
+    },
+    "SJA-PRIMARY": {
+      "title": "St John Ambulance — Primary survey",
+      "url": "https://www.sja.org.uk/first-aid-advice/primary-survey/"
+    }
+  },
+  "example_user_descriptions": {
+    "ar": [
+      "طاح وما يرد علي",
+      "مغمى عليه بس يتنفس",
+      "ما أقدر أصحيه",
+      "فاقد الوعي",
+      "وقع بالأرض وما يستجيب",
+      "ما يتحرك بس يتنفس",
+      "ما يفتح عيونه",
+      "ينام وما يصحى",
+      "ما يرد على الكلام",
+      "يتنفس بس ما يستجيب"
+    ],
+    "en": [
+      "He is unconscious but breathing.",
+      "She collapsed and won't respond.",
+      "He is breathing but not waking up.",
+      "She won't respond but she is breathing.",
+      "He fell down and is still breathing."
+    ]
+  },
+  "classification": {
+    "high_confidence_signals": [
+      {
+        "signal": "unresponsive or unconscious AND breathing normally",
+        "sources": [
+          "NHS-RP",
+          "ARC-UNRESPONSIVE",
+          "SJA-RP"
+        ]
+      }
+    ],
+    "ambiguous_signals": [
+      "fainted",
+      "collapsed",
+      "won't wake up",
+      "not responding",
+      "breathing status not stated"
+    ],
+    "allow_uncertain": true,
+    "uncertain_behavior": {
+      "action": "ASK_BREATHING_CHECK",
+      "goto": "q_breathing_normal"
+    }
+  },
+  "state": {
+    "responsive": false,
+    "breathing_normally": null,
+    "emergency_called": false,
+    "recovery_position_done": false,
+    "possible_major_trauma": false
+  },
+  "entry_logic": {
+    "start_node": "q_breathing_normal"
+  },
+  "nodes": [
+    {
+      "id": "q_breathing_normal",
+      "type": "question",
+      "question_ar": "هل يتنفس بشكل طبيعي؟",
+      "question_en": "Is the person breathing normally?",
+      "hint_ar": "راقب حركة الصدر واستمع للتنفس. اللهاث المتقطع أو التنفس غير المنتظم ليس تنفسًا طبيعيًا.",
+      "hint_en": "Watch the chest and listen for breathing. Gasping or irregular breathing is not normal breathing.",
+      "answers": {
+        "yes": "call_emergency",
+        "no_or_gasping": "TRANSITION:CARDIAC_ARREST_CPR"
+      },
+      "sources": [
+        "NHS-INCIDENT",
+        "NHS-CPR"
+      ]
+    },
+    {
+      "id": "call_emergency",
+      "type": "instruction",
+      "title_ar": "اتصل بخدمات الطوارئ الآن",
+      "title_en": "Call emergency services now.",
+      "sets": {
+        "emergency_called": true,
+        "breathing_normally": true
+      },
+      "next": "q_major_trauma",
+      "sources": [
+        "SJA-PRIMARY",
+        "NHS-RP"
+      ]
+    },
+    {
+      "id": "q_major_trauma",
+      "type": "question",
+      "question_ar": "هل تعتقد أن لديه إصابة خطيرة في الرأس أو الرقبة أو الظهر بعد سقوط أو حادث؟",
+      "question_en": "Do you suspect a serious head, neck, or back injury after a fall or accident?",
+      "answers": {
+        "yes": "trauma_caution",
+        "no": "recovery_position"
+      },
+      "sources": [
+        "NHS-RP"
+      ]
+    },
+    {
+      "id": "trauma_caution",
+      "type": "instruction",
+      "title_ar": "قلّل الحركة قدر الإمكان واتبع تعليمات الطوارئ",
+      "title_en": "Minimize movement and follow emergency-service instructions.",
+      "description_ar": "إذا كان مجرى الهواء أو التنفس في خطر، الحفاظ على مجرى الهواء له الأولوية.",
+      "description_en": "If the airway or breathing is at risk, keeping the airway open takes priority.",
+      "sets": {
+        "possible_major_trauma": true
+      },
+      "next": "monitor_breathing",
+      "sources": [
+        "NHS-RP"
+      ]
+    },
+    {
+      "id": "recovery_position",
+      "type": "instruction",
+      "title_ar": "ضعه في وضعية الإفاقة",
+      "title_en": "Place them in the recovery position.",
+      "description_ar": "ضعه على جانبه مع إبقاء مجرى الهواء مفتوحًا، بحيث يمكن للسوائل أو القيء أن يخرج من الفم.",
+      "description_en": "Roll them onto their side while keeping the airway open so fluid or vomit can drain from the mouth.",
+      "sets": {
+        "recovery_position_done": true
+      },
+      "next": "recovery_position_steps",
+      "sources": [
+        "NHS-RP",
+        "ARC-UNRESPONSIVE",
+        "SJA-RP"
+      ]
+    },
+    {
+      "id": "recovery_position_steps",
+      "type": "instruction",
+      "title_ar": "ثبّت الوضعية وافتح مجرى الهواء",
+      "title_en": "Stabilize the position and keep the airway open.",
+      "description_ar": "اثنِ الركبة العليا لتثبيت الجسم، وأمل الرأس للخلف قليلًا وارفع الذقن.",
+      "description_en": "Bend the upper knee to stabilize the body, then gently tilt the head back and lift the chin.",
+      "next": "monitor_breathing",
+      "sources": [
+        "NHS-RP",
+        "SJA-RP"
+      ]
+    },
+    {
+      "id": "monitor_breathing",
+      "type": "monitor",
+      "title_ar": "ابقَ معه وراقب تنفسه باستمرار",
+      "title_en": "Stay with them and keep checking their breathing.",
+      "watch_for": [
+        {
+          "signal": "breathing_stops_or_becomes_abnormal",
+          "goto": "TRANSITION:CARDIAC_ARREST_CPR"
+        },
+        {
+          "signal": "person_wakes_up",
+          "goto": "reassess"
+        }
+      ],
+      "sources": [
+        "NHS-INCIDENT",
+        "ARC-UNRESPONSIVE",
+        "SJA-RP"
+      ]
+    },
+    {
+      "id": "reassess",
+      "type": "instruction",
+      "title_ar": "إذا استعاد وعيه، أبقه مرتاحًا وانتظر المساعدة",
+      "title_en": "If they regain consciousness, keep them comfortable and wait for help.",
+      "terminal": true,
+      "sources": [
+        "ARC-UNRESPONSIVE"
+      ]
+    }
+  ],
+  "transitions": {
+    "CARDIAC_ARREST_CPR": {
+      "target_flow": "cardiac_arrest_cpr",
+      "reason_ar": "الشخص غير مستجيب ولا يتنفس بشكل طبيعي",
+      "reason_en": "The person is unresponsive and not breathing normally",
+      "sources": [
+        "NHS-CPR",
+        "NHS-INCIDENT"
+      ]
+    }
+  },
+  "precedence_rules": [
+    {
+      "rule": "Abnormal, irregular, or gasping breathing is treated as not breathing normally.",
+      "sources": [
+        "NHS-INCIDENT",
+        "NHS-CPR"
+      ]
+    },
+    {
+      "rule": "An unresponsive person who is breathing normally should be placed in the recovery position unless movement is contraindicated by suspected major trauma.",
+      "sources": [
+        "NHS-RP",
+        "ARC-UNRESPONSIVE",
+        "SJA-RP"
+      ]
+    },
+    {
+      "rule": "If normal breathing stops, transition immediately to the CPR flow.",
+      "sources": [
+        "NHS-CPR",
+        "NHS-INCIDENT"
+      ]
+    }
+  ],
+  "never_do": [
+    {
+      "rule_ar": "لا تترك الشخص وحده",
+      "rule_en": "Do not leave the person alone",
+      "sources": [
+        "ARC-UNRESPONSIVE",
+        "NHS-INCIDENT"
+      ]
+    },
+    {
+      "rule_ar": "لا تعتبر اللهاث المتقطع تنفسًا طبيعيًا",
+      "rule_en": "Do not treat gasping as normal breathing",
+      "sources": [
+        "NHS-INCIDENT",
+        "NHS-CPR"
+      ]
+    },
+    {
+      "rule_ar": "لا تحرك شخصًا يشتبه بإصابة خطيرة في الرأس أو الرقبة أو الظهر دون حاجة لحماية مجرى الهواء أو التنفس",
+      "rule_en": "Avoid unnecessary movement if serious head, neck, or back injury is suspected, unless needed to protect airway or breathing",
+      "sources": [
+        "NHS-RP"
+      ]
+    }
+  ],
+  "open_items": [
+    "Verify emergency-service numbers per Iraqi region before release.",
+    "A dedicated child/infant recovery-position flow can be added later if SANAD expands beyond the conference MVP."
+  ]
+}

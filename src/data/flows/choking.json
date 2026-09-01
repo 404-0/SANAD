@@ -1,0 +1,761 @@
+{
+  "id": "choking",
+  "schema_version": "1.1.0",
+  "name_ar": "الاختناق",
+  "name_en": "Choking / Foreign-Body Airway Obstruction",
+  "last_reviewed": "2026-08-18",
+  "medical_disclaimer_required": true,
+  "emergency_number": {
+    "strategy": "REGION_CONFIGURED",
+    "number": null,
+    "requires_verification": true
+  },
+  "sources": {
+    "ARC-ADULT": {
+      "title": "American Red Cross — Adult & Child Choking",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/adult-child-choking"
+    },
+    "ARC-INFANT": {
+      "title": "American Red Cross — Infant Choking",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/infant-choking"
+    },
+    "SJA-ADULT": {
+      "title": "St John Ambulance — Choking",
+      "url": "https://www.sja.org.uk/first-aid-advice/choking/"
+    },
+    "SJA-CHILD": {
+      "title": "St John Ambulance — Choking Child",
+      "url": "https://www.sja.org.uk/first-aid-advice/child-choking/"
+    },
+    "SJA-INFANT": {
+      "title": "St John Ambulance — Choking Baby",
+      "url": "https://www.sja.org.uk/first-aid-advice/baby-choking/"
+    },
+    "NHS-CHILD": {
+      "title": "NHS — How to stop a child from choking",
+      "url": "https://www.nhs.uk/baby/first-aid-and-safety/first-aid/how-to-stop-a-child-from-choking/"
+    }
+  },
+  "example_user_descriptions": {
+    "ar_iraqi": [
+      "قاعد يختنق",
+      "اللقمة علقت بحلقه",
+      "ما يكدر يتنفس",
+      "ما يكدر يحچي",
+      "يحاول يكح بس ما يطلع صوت",
+      "صار يشرق بالأكل",
+      "يمسك حلقه وما يقدر يتنفس",
+      "فجأة سكت وهو ياكل",
+      "الطفل بلع شي وما دا يتنفس",
+      "ابني بلع قطعة لعبة",
+      "وجهه صار أزرق بعد ما بلع شي",
+      "البيبي بلع شي وصار ما يبچي",
+      "الطفل يكح بس كحته ضعيفة",
+      "بعده يكح بقوة",
+      "هو يكدر يحچي بس شي عالق بحلقه",
+      "ما يكدر يكح نهائيا",
+      "صار يفتح فمه وما يطلع صوت",
+      "بلع شي وبعدها فقد الوعي",
+      "أكل لحم وصار يختنق",
+      "بلع حبة وصارت عالقة",
+      "صار أحمر بوجهه وما يكدر يحچي",
+      "البيبي دا يكح ويطلع صوت",
+      "مو قادر يتنفس زين بعد الأكل",
+      "قاعد يلهث وما يكدر يحچي",
+      "فجأة طاح وهو يختنق",
+      "يقدر يتنفس بس بصعوبة",
+      "صوته اختفى وهو ياكل",
+      "ما دا يقدر يطلع نفس",
+      "أكل شي وفجأة صار يمسك رقبته",
+      "الطفل صار أزرق بعد ما بلع شي"
+    ],
+    "en": [
+      "He's choking.",
+      "Food is stuck in his throat.",
+      "She can't breathe.",
+      "He can't speak.",
+      "He is coughing after eating.",
+      "He's trying to cough but no sound comes out.",
+      "My baby swallowed something.",
+      "He's holding his throat.",
+      "She suddenly stopped speaking while eating.",
+      "He can still cough strongly.",
+      "He can't cough or breathe.",
+      "My child swallowed a small object.",
+      "His lips are turning blue.",
+      "Something is blocking her airway.",
+      "He collapsed while choking."
+    ]
+  },
+  "classification": {
+    "high_confidence_signals": [
+      {
+        "signal": "unable to cough, speak, cry, or breathe effectively",
+        "sources": [
+          "ARC-ADULT",
+          "ARC-INFANT",
+          "SJA-ADULT",
+          "SJA-INFANT"
+        ]
+      },
+      {
+        "signal": "weak or no cough",
+        "sources": [
+          "ARC-ADULT",
+          "ARC-INFANT"
+        ]
+      },
+      {
+        "signal": "high-pitched squeaking or no sound",
+        "sources": [
+          "ARC-ADULT",
+          "ARC-INFANT"
+        ]
+      },
+      {
+        "signal": "pale or blue skin during suspected choking",
+        "sources": [
+          "ARC-ADULT",
+          "ARC-INFANT"
+        ]
+      },
+      {
+        "signal": "becomes unresponsive during choking",
+        "sources": [
+          "ARC-ADULT",
+          "ARC-INFANT",
+          "SJA-ADULT"
+        ]
+      }
+    ],
+    "medium_confidence_signals": [
+      {
+        "signal": "difficulty breathing, speaking, or coughing",
+        "sources": [
+          "SJA-ADULT",
+          "SJA-CHILD"
+        ]
+      },
+      {
+        "signal": "grasping or pointing to throat with distress",
+        "sources": [
+          "ARC-ADULT",
+          "SJA-ADULT"
+        ]
+      },
+      {
+        "signal": "sudden choking symptoms while eating or after a small object entered the mouth",
+        "sources": [
+          "ARC-ADULT",
+          "ARC-INFANT"
+        ]
+      }
+    ],
+    "negative_or_partial_signals": [
+      {
+        "signal": "strong/effective cough",
+        "sources": [
+          "ARC-ADULT",
+          "ARC-INFANT",
+          "NHS-CHILD"
+        ]
+      },
+      {
+        "signal": "able to speak or cry",
+        "sources": [
+          "ARC-ADULT",
+          "ARC-INFANT",
+          "SJA-ADULT"
+        ]
+      },
+      {
+        "signal": "breathing and making normal sounds while coughing",
+        "sources": [
+          "SJA-INFANT",
+          "NHS-CHILD"
+        ]
+      }
+    ],
+    "allow_uncertain": true,
+    "uncertain_behavior": {
+      "action": "ASK_MINIMUM_CLARIFICATION",
+      "clarifying_nodes": [
+        "q_effective_airway",
+        "q_responsive"
+      ]
+    }
+  },
+  "state": {
+    "severity": null,
+    "age_group": null,
+    "responsive": true,
+    "emergency_called": false,
+    "object_expelled": false,
+    "special_body_branch": null,
+    "medical_followup_needed": false
+  },
+  "entry_logic": {
+    "start_node": "q_effective_airway",
+    "rules": [
+      {
+        "if": "high_confidence_severe_signal",
+        "set": {
+          "severity": "severe"
+        },
+        "goto": "q_responsive"
+      },
+      {
+        "if": "uncertain",
+        "goto": "q_effective_airway"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "q_effective_airway",
+      "type": "question",
+      "question_ar": "هل يستطيع أن يكح بقوة أو يتكلم أو يبكي أو يتنفس؟",
+      "question_en": "Can they cough strongly, speak, cry, or breathe?",
+      "answers": {
+        "yes": "partial_choking",
+        "no": "q_responsive",
+        "uncertain": "q_responsive"
+      },
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT",
+        "SJA-ADULT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "q_responsive",
+      "type": "question",
+      "question_ar": "هل المصاب واعٍ ويستجيب لك؟",
+      "question_en": "Is the casualty responsive?",
+      "answers": {
+        "yes": "q_age_group",
+        "no": "unresponsive_choking"
+      },
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT"
+      ]
+    },
+    {
+      "id": "partial_choking",
+      "type": "instruction",
+      "title_ar": "شجّعه على الكحة بقوة",
+      "title_en": "Encourage them to keep coughing.",
+      "description_ar": "ابقَ معه وراقبه. إذا أصبحت الكحة ضعيفة أو لم يعد يستطيع الكلام أو التنفس، انتقل فورًا لمسار الاختناق الشديد.",
+      "description_en": "Stay with them. If the cough becomes weak or they can no longer speak or breathe, switch immediately to severe choking.",
+      "sets": {
+        "severity": "partial"
+      },
+      "answers": {
+        "still_effective": "partial_monitor",
+        "worse": "q_responsive",
+        "object_out": "aftercare_basic"
+      },
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT",
+        "SJA-ADULT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "partial_monitor",
+      "type": "monitor",
+      "title_ar": "ابقَ معه وراقب التنفس والكحة",
+      "title_en": "Stay with them and watch breathing and coughing.",
+      "watch_for": [
+        {
+          "signal": "weak_or_silent_cough",
+          "goto": "q_responsive"
+        },
+        {
+          "signal": "unable_to_speak_or_breathe",
+          "goto": "q_responsive"
+        },
+        {
+          "signal": "unresponsive",
+          "goto": "unresponsive_choking"
+        },
+        {
+          "signal": "object_expelled",
+          "goto": "aftercare_basic"
+        }
+      ],
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT"
+      ]
+    },
+    {
+      "id": "q_age_group",
+      "type": "question",
+      "question_ar": "هل المصاب رضيع عمره أقل من سنة؟",
+      "question_en": "Is the casualty an infant under 1 year old?",
+      "sets": {
+        "severity": "severe"
+      },
+      "answers": {
+        "yes": "infant_back_blows",
+        "no": "q_special_body"
+      },
+      "sources": [
+        "ARC-INFANT",
+        "SJA-INFANT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "q_special_body",
+      "type": "question",
+      "question_ar": "هل المصاب حامل بوضوح، أو لا يمكنك إحاطة بطنه بذراعيك؟",
+      "question_en": "Is the person visibly pregnant, or too large to wrap your arms around the abdomen?",
+      "answers": {
+        "yes": "adult_back_blows_special",
+        "no": "adult_back_blows"
+      },
+      "sources": [
+        "ARC-ADULT"
+      ]
+    },
+    {
+      "id": "adult_back_blows",
+      "type": "instruction",
+      "title_ar": "أعطِ 5 ضربات قوية بين لوحي الكتف",
+      "title_en": "Give 5 firm back blows.",
+      "description_ar": "اجعله يميل للأمام واضرب بكعب اليد بين لوحي الكتف. افحص بعد كل ضربة إن خرج الجسم.",
+      "description_en": "Lean them forward and strike between the shoulder blades with the heel of your hand. Check after each blow.",
+      "answers": {
+        "object_out": "aftercare_basic",
+        "still_choking": "adult_abdominal_thrusts",
+        "unresponsive": "unresponsive_choking"
+      },
+      "sources": [
+        "ARC-ADULT",
+        "SJA-ADULT",
+        "SJA-CHILD",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "adult_abdominal_thrusts",
+      "type": "instruction",
+      "title_ar": "أعطِ 5 ضغطات بطنية حادة",
+      "title_en": "Give 5 abdominal thrusts.",
+      "description_ar": "قف خلفه، ضع قبضة فوق السرة وتحت القفص الصدري، واسحب للداخل ولأعلى حتى 5 مرات.",
+      "description_en": "Stand behind them, place a fist above the navel and below the ribcage, and pull inward and upward up to 5 times.",
+      "sets": {
+        "medical_followup_needed": true
+      },
+      "answers": {
+        "object_out": "aftercare_after_thrusts",
+        "still_choking": "call_emergency_adult",
+        "unresponsive": "unresponsive_choking"
+      },
+      "sources": [
+        "ARC-ADULT",
+        "SJA-ADULT",
+        "SJA-CHILD",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "adult_back_blows_special",
+      "type": "instruction",
+      "title_ar": "أعطِ 5 ضربات قوية بين لوحي الكتف",
+      "title_en": "Give 5 firm back blows.",
+      "description_ar": "إذا لم يخرج الجسم، استخدم ضغطات الصدر بدل ضغطات البطن.",
+      "description_en": "If the object does not come out, use chest thrusts instead of abdominal thrusts.",
+      "answers": {
+        "object_out": "aftercare_basic",
+        "still_choking": "adult_chest_thrusts_special",
+        "unresponsive": "unresponsive_choking"
+      },
+      "sources": [
+        "ARC-ADULT"
+      ]
+    },
+    {
+      "id": "adult_chest_thrusts_special",
+      "type": "instruction",
+      "title_ar": "استخدم ضغطات الصدر بدل ضغطات البطن",
+      "title_en": "Use chest thrusts instead of abdominal thrusts.",
+      "description_ar": "هذا الفرع للحمل الواضح أو عندما يتعذر إحاطة البطن بالذراعين.",
+      "description_en": "This branch is for a visibly pregnant person or someone too large for abdominal thrusts.",
+      "sets": {
+        "special_body_branch": "CHEST_THRUSTS",
+        "medical_followup_needed": true
+      },
+      "answers": {
+        "object_out": "aftercare_after_thrusts",
+        "still_choking": "call_emergency_special",
+        "unresponsive": "unresponsive_choking"
+      },
+      "sources": [
+        "ARC-ADULT"
+      ]
+    },
+    {
+      "id": "call_emergency_adult",
+      "type": "instruction",
+      "title_ar": "اتصل بخدمات الطوارئ الآن",
+      "title_en": "Call emergency services now.",
+      "description_ar": "استمر بالتناوب بين 5 ضربات ظهر و5 ضغطات بطنية حتى يخرج الجسم أو تصل المساعدة أو يفقد المصاب الاستجابة.",
+      "description_en": "Keep alternating 5 back blows and 5 abdominal thrusts until the object comes out, help arrives, or the person becomes unresponsive.",
+      "sets": {
+        "emergency_called": true
+      },
+      "next": "adult_cycle",
+      "sources": [
+        "ARC-ADULT",
+        "SJA-ADULT",
+        "SJA-CHILD"
+      ]
+    },
+    {
+      "id": "call_emergency_special",
+      "type": "instruction",
+      "title_ar": "اتصل بخدمات الطوارئ الآن",
+      "title_en": "Call emergency services now.",
+      "description_ar": "استمر بضربات الظهر وضغطات الصدر حتى يخرج الجسم أو تصل المساعدة أو يفقد المصاب الاستجابة.",
+      "description_en": "Continue back blows and chest thrusts until the object comes out, help arrives, or the person becomes unresponsive.",
+      "sets": {
+        "emergency_called": true
+      },
+      "next": "special_cycle",
+      "sources": [
+        "ARC-ADULT"
+      ]
+    },
+    {
+      "id": "adult_cycle",
+      "type": "loop",
+      "title_ar": "كرر: 5 ضربات ظهر ثم 5 ضغطات بطنية",
+      "title_en": "Repeat: 5 back blows, then 5 abdominal thrusts.",
+      "answers": {
+        "object_out": "aftercare_after_thrusts",
+        "still_choking": "adult_cycle",
+        "unresponsive": "unresponsive_choking"
+      },
+      "sources": [
+        "ARC-ADULT",
+        "SJA-ADULT",
+        "SJA-CHILD"
+      ]
+    },
+    {
+      "id": "special_cycle",
+      "type": "loop",
+      "title_ar": "كرر ضربات الظهر وضغطات الصدر",
+      "title_en": "Repeat back blows and chest thrusts.",
+      "answers": {
+        "object_out": "aftercare_after_thrusts",
+        "still_choking": "special_cycle",
+        "unresponsive": "unresponsive_choking"
+      },
+      "sources": [
+        "ARC-ADULT"
+      ]
+    },
+    {
+      "id": "infant_back_blows",
+      "type": "instruction",
+      "title_ar": "ضع الرضيع ووجهه للأسفل وأعطِ 5 ضربات ظهر",
+      "title_en": "Place the infant face-down and give 5 back blows.",
+      "description_ar": "اسند الرأس والرقبة واجعل الرأس أخفض من الجسم. اضرب بين لوحي الكتف بكعب اليد.",
+      "description_en": "Support the head and neck and keep the head lower than the body. Strike between the shoulder blades with the heel of your hand.",
+      "answers": {
+        "object_out": "aftercare_basic",
+        "still_choking": "infant_chest_thrusts",
+        "unresponsive": "unresponsive_choking"
+      },
+      "sources": [
+        "ARC-INFANT",
+        "SJA-INFANT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "infant_chest_thrusts",
+      "type": "instruction",
+      "title_ar": "اقلب الرضيع على ظهره وأعطِ 5 ضغطات صدرية",
+      "title_en": "Turn the infant face-up and give 5 chest thrusts.",
+      "description_ar": "أبقِ الرأس أخفض من الصدر، واستخدم إصبعين في منتصف الصدر أسفل خط الحلمتين.",
+      "description_en": "Keep the head lower than the chest and use two fingers in the center of the chest just below the nipple line.",
+      "sets": {
+        "medical_followup_needed": true
+      },
+      "answers": {
+        "object_out": "aftercare_infant",
+        "still_choking": "call_emergency_infant",
+        "unresponsive": "unresponsive_choking"
+      },
+      "sources": [
+        "ARC-INFANT",
+        "SJA-INFANT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "call_emergency_infant",
+      "type": "instruction",
+      "title_ar": "اتصل بخدمات الطوارئ الآن",
+      "title_en": "Call emergency services now.",
+      "description_ar": "استمر بالتناوب بين 5 ضربات ظهر و5 ضغطات صدرية حتى يخرج الجسم أو تصل المساعدة أو يفقد الرضيع الاستجابة.",
+      "description_en": "Keep alternating 5 back blows and 5 chest thrusts until the object comes out, help arrives, or the infant becomes unresponsive.",
+      "sets": {
+        "emergency_called": true
+      },
+      "next": "infant_cycle",
+      "sources": [
+        "ARC-INFANT",
+        "SJA-INFANT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "infant_cycle",
+      "type": "loop",
+      "title_ar": "كرر: 5 ضربات ظهر ثم 5 ضغطات صدرية",
+      "title_en": "Repeat: 5 back blows, then 5 chest thrusts.",
+      "answers": {
+        "object_out": "aftercare_infant",
+        "still_choking": "infant_cycle",
+        "unresponsive": "unresponsive_choking"
+      },
+      "sources": [
+        "ARC-INFANT",
+        "SJA-INFANT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "visible_object_rule",
+      "type": "rule",
+      "title_ar": "أزل الجسم فقط إذا كان ظاهرًا ويمكن التقاطه بسهولة",
+      "title_en": "Remove the object only if it is clearly visible and easy to grasp.",
+      "description_ar": "لا تُدخل أصابعك عشوائيًا داخل الفم.",
+      "description_en": "Never perform a blind finger sweep.",
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT",
+        "SJA-CHILD",
+        "SJA-INFANT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "unresponsive_choking",
+      "type": "transition",
+      "title_ar": "إذا فقد الاستجابة، ضعه على سطح ثابت وابدأ مسار الإنعاش",
+      "title_en": "If they become unresponsive, lower them to a firm surface and start the CPR flow.",
+      "description_ar": "اتصل بخدمات الطوارئ إن لم يتم الاتصال بعد. أثناء الإنعاش، افحص الفم فقط بحثًا عن جسم ظاهر يمكن إزالته بسهولة.",
+      "description_en": "Call emergency services if not already called. During CPR, inspect the mouth only for a clearly visible object that can be removed easily.",
+      "sets": {
+        "responsive": false,
+        "emergency_called": true
+      },
+      "next": "TRANSITION:CARDIAC_ARREST_CPR",
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT",
+        "NHS-CHILD",
+        "SJA-ADULT",
+        "SJA-INFANT"
+      ]
+    },
+    {
+      "id": "aftercare_basic",
+      "type": "aftercare",
+      "title_ar": "استمر بالمراقبة بعد خروج الجسم",
+      "title_en": "Continue to observe after the object comes out.",
+      "description_ar": "إذا استمرت صعوبة التنفس أو السعال أو الألم، اطلب تقييمًا طبيًا.",
+      "description_en": "Seek medical assessment if breathing difficulty, persistent coughing, or pain continues.",
+      "terminal": true,
+      "sources": [
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "aftercare_after_thrusts",
+      "type": "aftercare",
+      "title_ar": "اطلب تقييمًا طبيًا بعد ضغطات الاختناق",
+      "title_en": "Seek medical assessment after choking thrusts.",
+      "description_ar": "قد تسبب الضغطات إصابة، وقد يبقى جزء من الجسم العالق. التوصية الصريحة بالمستشفى في المصادر التي راجعناها تخص الأطفال بعد ضغطات البطن.",
+      "description_en": "Thrusts can cause injury and part of the obstruction may remain. The explicit hospital recommendation in the reviewed sources applies to children after abdominal thrusts.",
+      "terminal": true,
+      "sources": [
+        "SJA-CHILD",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "id": "aftercare_infant",
+      "type": "aftercare",
+      "title_ar": "يجب فحص الرضيع طبيًا بعد ضغطات الصدر",
+      "title_en": "The infant should be medically assessed after chest thrusts.",
+      "description_ar": "حتى إذا خرج الجسم، توصي St John Ambulance بفحص جميع الرضع الذين تلقوا ضغطات صدرية في المستشفى.",
+      "description_en": "Even if the object clears, St John Ambulance recommends hospital assessment for infants who received chest thrusts.",
+      "terminal": true,
+      "sources": [
+        "SJA-INFANT"
+      ]
+    }
+  ],
+  "transitions": {
+    "CARDIAC_ARREST_CPR": {
+      "target_flow": "cardiac_arrest_cpr",
+      "reason_ar": "المصاب أصبح غير مستجيب أثناء الاختناق",
+      "reason_en": "The casualty became unresponsive during choking",
+      "carry_over": [
+        "airway obstruction suspected",
+        "remove only clearly visible mouth obstruction during CPR checks"
+      ],
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT",
+        "NHS-CHILD"
+      ]
+    }
+  },
+  "precedence_rules": [
+    {
+      "rule": "If coughing/speaking/crying is effective, encourage coughing and observe rather than immediately starting thrusts.",
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT",
+        "SJA-ADULT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "rule": "Infants under 1 year receive back blows and chest thrusts, not abdominal thrusts.",
+      "sources": [
+        "ARC-INFANT",
+        "SJA-INFANT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "rule": "If the casualty becomes unresponsive, transition rapidly to CPR guidance.",
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT",
+        "SJA-ADULT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "rule": "Remove an obstruction only when clearly visible and easily grasped; no blind finger sweep.",
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT",
+        "SJA-CHILD",
+        "SJA-INFANT",
+        "NHS-CHILD"
+      ]
+    }
+  ],
+  "never_do": [
+    {
+      "rule_ar": "لا تُدخل أصابعك عشوائيًا داخل الفم إذا لم ترَ الجسم",
+      "rule_en": "Never perform a blind finger sweep",
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT",
+        "SJA-CHILD",
+        "SJA-INFANT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "rule_ar": "لا تستخدم ضغطات البطن لرضيع أقل من سنة",
+      "rule_en": "Do not use abdominal thrusts on an infant under 1 year",
+      "sources": [
+        "ARC-INFANT",
+        "SJA-INFANT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "rule_ar": "لا تترك المصاب وحده أثناء المراقبة",
+      "rule_en": "Do not leave the casualty alone while observing",
+      "sources": [
+        "ARC-ADULT",
+        "ARC-INFANT",
+        "NHS-CHILD"
+      ]
+    },
+    {
+      "rule_ar": "لا تعلق طفلًا من قدميه رأسًا على عقب",
+      "rule_en": "Do not hang a child upside down by the feet",
+      "sources": [
+        "ARC-ADULT"
+      ]
+    },
+    {
+      "rule_ar": "للحامل بوضوح استخدم ضغطات الصدر بدل ضغطات البطن",
+      "rule_en": "For a visibly pregnant person, use chest thrusts instead of abdominal thrusts",
+      "sources": [
+        "ARC-ADULT"
+      ]
+    }
+  ],
+  "disagreements": [
+    {
+      "id": "dis_order",
+      "topic": "Order of back blows and thrusts in a conscious choking child",
+      "positions": [
+        {
+          "sources": [
+            "ARC-ADULT",
+            "SJA-CHILD"
+          ],
+          "position": "Back blows first, then abdominal thrusts if still choking."
+        },
+        {
+          "sources": [
+            "NHS-CHILD"
+          ],
+          "position": "NHS says more than one method may be needed and order does not matter, while its detailed sequence presents back blows then thrusts."
+        }
+      ],
+      "app_resolution": "Use back blows first, then age-appropriate thrusts.",
+      "surface_to_user": false
+    },
+    {
+      "id": "dis_call_timing",
+      "topic": "When to call emergency services",
+      "positions": [
+        {
+          "sources": [
+            "ARC-ADULT",
+            "ARC-INFANT"
+          ],
+          "position": "Call for emergency help when immediate emergency signs are identified, then give care."
+        },
+        {
+          "sources": [
+            "SJA-ADULT",
+            "SJA-CHILD",
+            "SJA-INFANT",
+            "NHS-CHILD"
+          ],
+          "position": "Give initial back blows and thrusts; if obstruction remains, call and continue cycles."
+        }
+      ],
+      "app_resolution": "Do not delay hands-on care. If a second helper is available, have them call immediately. If alone, call as soon as the first cycle fails or sooner if the casualty becomes unresponsive.",
+      "surface_to_user": false
+    }
+  ],
+  "open_items": [
+    "Verify emergency-service numbers per Iraqi region before release.",
+    "Adult-specific aftercare after abdominal/chest thrusts should be expanded only after reviewing a current authoritative adult source.",
+    "Pregnancy/large-body chest-thrust modification is explicitly supported by American Red Cross; keep source attribution visible in developer documentation."
+  ]
+}

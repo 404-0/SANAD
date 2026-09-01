@@ -1,0 +1,606 @@
+{
+  "id": "severe_external_bleeding",
+  "schema_version": "1.1.0",
+  "name_ar": "نزيف خارجي شديد",
+  "name_en": "Severe External Bleeding",
+  "last_reviewed": "2026-08-18",
+  "medical_disclaimer_required": true,
+
+  "emergency_number": {
+    "strategy": "REGION_CONFIGURED",
+    "default_label_ar": "الإسعاف",
+    "default_label_en": "Ambulance",
+    "note": "Do NOT hardcode a nationwide Iraqi number. The only government-published number verified is 122, described by the KRG as an Erbil health-directorate ambulance line, explicitly regional in scope. Numbers circulating on telecom/aggregator pages do not meet this project's sourcing bar. Resolve per user region and verify with the Iraqi Ministry of Health before release.",
+    "regions": {
+      "erbil": { "number": "122", "sources": ["KRG-122"] },
+      "_default": { "number": null, "requires_verification": true }
+    }
+  },
+
+  "sources": {
+    "NHS-CG": {
+      "title": "NHS — Cuts and grazes",
+      "url": "https://www.nhs.uk/conditions/cuts-and-grazes/"
+    },
+    "NWAS-HB": {
+      "title": "NHS North West Ambulance Service — Heavy bleeding",
+      "url": "https://www.nwas.nhs.uk/ambulance-academy/children/what-to-do-when-someone-is-hurt/heavy-bleeding/"
+    },
+    "NWAS-FA": {
+      "title": "NHS North West Ambulance Service — First aid facts leaflet (PDF)",
+      "url": "https://www.nwas.nhs.uk/wp-content/uploads/2019/04/nwas-first-aid-facts-a5-leaflet.pdf"
+    },
+    "BRC-BH": {
+      "title": "British Red Cross — Bleeding heavily",
+      "url": "https://www.redcross.org.uk/first-aid/learn-first-aid/bleeding-heavily"
+    },
+    "BRC-UNB": {
+      "title": "British Red Cross — Unresponsive and not breathing",
+      "url": "https://www.redcross.org.uk/first-aid/learn-first-aid/unresponsive-and-not-breathing"
+    },
+    "ARC-LTB": {
+      "title": "American Red Cross — Bleeding (Life-Threatening External)",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/bleeding-life-threatening-external"
+    },
+    "ARC-TQ": {
+      "title": "American Red Cross — How to apply a tourniquet",
+      "url": "https://www.redcross.org/take-a-class/resources/articles/how-to-apply-a-tourniquet"
+    },
+    "ARC-FAS": {
+      "title": "American Red Cross — First aid steps (CHECK-CALL-CARE)",
+      "url": "https://www.redcross.org/take-a-class/first-aid/performing-first-aid/first-aid-steps"
+    },
+    "SJA-SB": {
+      "title": "St John Ambulance — Severe bleeding",
+      "url": "https://www.sja.org.uk/first-aid-advice/severe-bleeding/"
+    },
+    "SJA-LTB": {
+      "title": "St John Ambulance — Life-threatening bleed",
+      "url": "https://www.sja.org.uk/first-aid-advice/life-threatening-bleed/"
+    },
+    "SJA-SHOCK": {
+      "title": "St John Ambulance — Shock",
+      "url": "https://www.sja.org.uk/first-aid-advice/shock/"
+    },
+    "SJA-PS": {
+      "title": "St John Ambulance — Primary survey (DRABC)",
+      "url": "https://www.sja.org.uk/first-aid-advice/primary-survey/"
+    },
+    "SJA-RP": {
+      "title": "St John Ambulance — Recovery position",
+      "url": "https://www.sja.org.uk/first-aid-advice/recovery-position/"
+    },
+    "SJA-CPR": {
+      "title": "St John Ambulance — CPR",
+      "url": "https://www.sja.org.uk/first-aid-advice/cpr/"
+    },
+    "SJA-CG": {
+      "title": "St John Ambulance — Cuts and grazes",
+      "url": "https://www.sja.org.uk/first-aid-advice/cuts-and-grazes/"
+    },
+    "WHO-CFAR": {
+      "title": "WHO — Community First Aid Response Pocket Guide (PDF)",
+      "url": "https://cdn.who.int/media/docs/default-source/integrated-health-services-(ihs)/csy/cfar-pocketguide.pdf"
+    },
+    "KRG-122": {
+      "title": "KRG — Erbil's emergency line 122",
+      "url": "https://gov.krd/dmi-en/activities/news-and-press-releases/2023/january/erbil-s-emergency-line-122-fast-and-free-help-to-all/"
+    }
+  },
+
+  "classification": {
+    "high_confidence_signals": [
+      { "signal": "blood spurting, pumping or spraying", "sources": ["WHO-CFAR", "SJA-LTB", "ARC-LTB"] },
+      { "signal": "bleeding cannot be stopped or slowed with pressure", "sources": ["NHS-CG", "SJA-LTB"] },
+      { "signal": "blood rapidly soaking through dressing after dressing", "sources": ["SJA-LTB"] },
+      { "signal": "rapid pooling of blood", "sources": ["WHO-CFAR"] },
+      { "signal": "blood volume about half a soda can, less for infants and small children", "sources": ["ARC-LTB"] },
+      { "signal": "bright red blood, hard to control", "sources": ["NHS-CG"] },
+      { "signal": "amputation of a limb or digit", "sources": ["WHO-CFAR"] },
+      { "signal": "penetrating mechanism: gunshot, stabbing, power tool, serious road traffic collision", "sources": ["SJA-LTB"] },
+      { "signal": "signs of shock present", "sources": ["SJA-SHOCK", "BRC-BH"] },
+      { "signal": "reduced responsiveness or unresponsive", "sources": ["ARC-FAS", "SJA-PS"] }
+    ],
+    "allow_uncertain": true,
+    "uncertain_behavior": {
+      "action": "RUN_ENTRY_ACTION_THEN_CLARIFY",
+      "note": "Never gate the entry action on clarification. Start direct pressure first, then ask at most these three, in order, and stop asking the moment any high-confidence signal appears.",
+      "clarifying_nodes": ["q_flow_character", "q_pressure_response", "q_shock_signs"]
+    }
+  },
+
+  "state": {
+    "emergency_called": false,
+    "pressure_maintained": false,
+    "dressing_applied": false,
+    "dressings_soaked_count": 0,
+    "tourniquet_applied": false,
+    "tourniquet_applied_at": null,
+    "wound_packed": false,
+    "shock_care_started": false,
+    "severed_part_secured": false,
+    "wound_site": null,
+    "embedded_object_present": null,
+    "last_circulation_check_at": null
+  },
+
+  "entry_action": {
+    "title_ar": "اضغط بقوة على مكان النزيف الآن",
+    "title_en": "Press hard on the wound. Now.",
+    "description_ar": "استخدم أي قماش نظيف أو يدك مباشرة. لا تؤخر الضغط بحثًا عن معدات.",
+    "description_en": "Use any clean cloth, or your bare hand. Do not delay pressure to look for supplies.",
+    "action": "START_DIRECT_PRESSURE",
+    "sets": { "pressure_maintained": true },
+    "fires_without_questions": true,
+    "sources": ["BRC-BH", "WHO-CFAR", "SJA-SB", "ARC-LTB"],
+    "next": "call_emergency"
+  },
+
+  "global_escalations": [
+    {
+      "id": "esc_soaked_through",
+      "trigger": "dressings_soaked_count >= 2",
+      "reason_ar": "الدم يشبع ضمادًا بعد ضماد",
+      "reason_en": "Blood soaking through dressing after dressing",
+      "goto": "q_wound_site",
+      "sources": ["SJA-LTB"]
+    },
+    {
+      "id": "esc_unresponsive",
+      "trigger": "user_reports_unresponsive",
+      "goto": "check_response",
+      "sources": ["SJA-PS", "ARC-FAS"]
+    },
+    {
+      "id": "esc_shock_signs",
+      "trigger": "user_reports_shock_signs",
+      "goto": "shock_care",
+      "sources": ["SJA-SHOCK", "BRC-BH"]
+    }
+  ],
+
+  "nodes": [
+    {
+      "id": "call_emergency",
+      "type": "instruction",
+      "title_ar": "استمر بالضغط. اتصل بالإسعاف الآن",
+      "title_en": "Keep pressing. Call the ambulance now.",
+      "description_ar": "شغّل مكبر الصوت لتبقى يداك على الجرح.",
+      "description_en": "Put the phone on speaker so both hands stay on the wound.",
+      "action": "CALL_EMERGENCY",
+      "sets": { "emergency_called": true },
+      "answers": {
+        "calling": "q_embedded_object",
+        "someone_else_calling": "q_embedded_object",
+        "alone_no_phone": "instr_alone"
+      },
+      "sources": ["SJA-SB", "BRC-BH", "ARC-LTB", "NWAS-HB", "SJA-CPR"],
+      "source_note": "Sequencing divergence: BRC-BH, SJA-SB and WHO-CFAR put hands-on-wound before the call; NWAS-HB states calling 999 is the most important first action. Speakerphone satisfies both."
+    },
+    {
+      "id": "instr_alone",
+      "type": "instruction",
+      "title_ar": "اصرخ لطلب المساعدة ولا تترك المصاب",
+      "title_en": "Shout for help. Do not leave them.",
+      "description_ar": "استمر بالضغط. أوقف أي شخص يمر واطلب منه الاتصال.",
+      "description_en": "Keep pressing. Stop anyone passing and have them call.",
+      "sources": ["SJA-CPR", "SJA-PS"],
+      "next": "q_embedded_object"
+    },
+
+    {
+      "id": "q_embedded_object",
+      "type": "question",
+      "question_ar": "هل يوجد جسم مغروس داخل الجرح؟",
+      "question_en": "Is there an object stuck in the wound?",
+      "skip_if": "embedded_object_present != null",
+      "answers": {
+        "yes": "instr_embedded_object",
+        "no": "instr_apply_dressing"
+      },
+      "sources": ["NHS-CG", "BRC-BH", "SJA-SB"]
+    },
+    {
+      "id": "instr_embedded_object",
+      "type": "instruction",
+      "title_ar": "لا تسحب الجسم المغروس",
+      "title_en": "Do NOT pull the object out.",
+      "description_ar": "اضغط على جانبي الجرح حوله، وابنِ حشوة حوله ثم ضمّد فوق الحشوة.",
+      "description_en": "Press either side of it. Build padding around it, then bandage over the padding.",
+      "sets": { "embedded_object_present": true },
+      "sources": ["BRC-BH", "SJA-SB", "NWAS-FA", "NHS-CG"],
+      "source_note": "BRC-BH: it is helping plug the hole. NWAS-FA: build up padding around it before bandaging.",
+      "next": "instr_circulation_check"
+    },
+
+    {
+      "id": "instr_apply_dressing",
+      "type": "instruction",
+      "title_ar": "ضمّد بإحكام فوق القماش",
+      "title_en": "Bandage firmly over the cloth.",
+      "description_ar": "بإحكام يكفي للضغط، دون أن يقطع الدورة الدموية.",
+      "description_en": "Firm enough to hold pressure. Not so tight it goes numb or blue.",
+      "sets": { "dressing_applied": true },
+      "sources": ["SJA-SB", "WHO-CFAR"],
+      "next": "instr_circulation_check"
+    },
+    {
+      "id": "instr_circulation_check",
+      "type": "instruction",
+      "title_ar": "اضغط على ظفر بعد الضماد ٥ ثوانٍ",
+      "title_en": "Press a fingernail below the bandage for 5 seconds.",
+      "description_ar": "إذا لم يعد اللون خلال ثانيتين، خفّف الضماد قليلًا.",
+      "description_en": "If colour does not return within 2 seconds, loosen it slightly.",
+      "sets": { "last_circulation_check_at": "NOW" },
+      "sources": ["SJA-SB", "NHS-CG"],
+      "next": "q_bleeding_uncontrolled"
+    },
+
+    {
+      "id": "q_bleeding_uncontrolled",
+      "type": "question",
+      "question_ar": "هل ما زال الدم يتدفق بقوة أو يشبع الضماد رغم الضغط؟",
+      "question_en": "Is blood still flowing hard or soaking through, despite pressure?",
+      "answers": {
+        "yes": "q_wound_site",
+        "no": "shock_care",
+        "stopped_and_minor": "TRANSITION:MINOR_WOUND"
+      },
+      "sources": ["NHS-CG", "SJA-LTB"]
+    },
+
+    {
+      "id": "q_wound_site",
+      "type": "question",
+      "question_ar": "أين مكان النزيف؟",
+      "question_en": "Where is the bleeding?",
+      "skip_if": "wound_site != null",
+      "answers": {
+        "limb": "q_tourniquet_available",
+        "junctional_or_torso": "instr_wound_packing",
+        "amputation": "amputation_branch"
+      },
+      "answer_labels": {
+        "limb": { "ar": "ذراع أو ساق", "en": "Arm or leg" },
+        "junctional_or_torso": { "ar": "الرقبة، الكتف، الإبط، أعلى الفخذ، الظهر أو الجذع", "en": "Neck, shoulder, armpit, groin, back or torso" },
+        "amputation": { "ar": "هناك جزء مقطوع من الجسم", "en": "A body part has been cut off" }
+      },
+      "sources": ["ARC-TQ", "ARC-LTB", "WHO-CFAR"],
+      "source_note": "ARC-TQ limits tourniquets to arm or leg. ARC-LTB names scalp, neck, shoulder, groin, back and limbs as wound-packing sites."
+    },
+
+    {
+      "id": "q_tourniquet_available",
+      "type": "question",
+      "question_ar": "هل تتوفر عاصبة (تورنيكيه)؟",
+      "question_en": "Do you have a tourniquet?",
+      "answers": {
+        "yes": "instr_tourniquet_apply",
+        "no": "instr_wound_packing"
+      },
+      "sources": ["ARC-TQ"],
+      "source_note": "ARC-TQ: if no tourniquet is available, use direct pressure."
+    },
+    {
+      "id": "instr_tourniquet_apply",
+      "type": "instruction",
+      "title_ar": "ضع العاصبة على الطرف فوق الجرح",
+      "title_en": "Put the tourniquet on the limb, above the wound.",
+      "description_ar": "لا تضعها فوق مفصل أبدًا. شدّها حتى يتوقف النزيف تمامًا.",
+      "description_en": "Never on a joint. Tighten until the bleeding stops completely.",
+      "sets": { "tourniquet_applied": true },
+      "sources": ["ARC-TQ", "SJA-LTB"],
+      "source_note": "DISAGREEMENT dis_tq_placement — authorities agree on above-the-wound and never-on-a-joint, but differ on exact distance and elbow/knee preference. Show shared rule only.",
+      "next": "instr_tourniquet_record"
+    },
+    {
+      "id": "instr_tourniquet_record",
+      "type": "instruction",
+      "title_ar": "سجّل وقت وضع العاصبة",
+      "title_en": "Write down the time you applied it.",
+      "description_ar": "لا تفكّها إطلاقًا. الطاقم الطبي فقط من يفكّها.",
+      "description_en": "Never loosen it. Only a medical professional removes it.",
+      "sets": { "tourniquet_applied_at": "NOW" },
+      "sources": ["SJA-LTB", "WHO-CFAR", "ARC-TQ"],
+      "source_note": "Time recording from SJA-LTB and WHO-CFAR; the ARC-TQ page does not mention it. Never-loosen from ARC-TQ and SJA-LTB.",
+      "next": "q_tourniquet_effective"
+    },
+    {
+      "id": "q_tourniquet_effective",
+      "type": "question",
+      "question_ar": "هل توقف النزيف بعد شدّ العاصبة؟",
+      "question_en": "Has the bleeding stopped after tightening?",
+      "answers": {
+        "yes": "shock_care",
+        "no": "instr_second_tourniquet"
+      },
+      "sources": ["ARC-TQ"]
+    },
+    {
+      "id": "instr_second_tourniquet",
+      "type": "instruction",
+      "title_ar": "ضع عاصبة ثانية فوق الأولى",
+      "title_en": "Apply a second tourniquet above the first.",
+      "description_ar": "أقرب إلى القلب من الأولى. إن لم تتوفر، استمر بالضغط المباشر بأقصى قوة.",
+      "description_en": "Closer to the heart than the first. If you have none, keep maximum direct pressure.",
+      "sources": ["ARC-TQ"],
+      "source_note": "ARC-TQ: if the first is as tight as possible and bleeding continues, apply a second above it, closer to the heart.",
+      "next": "shock_care"
+    },
+
+    {
+      "id": "instr_wound_packing",
+      "type": "instruction",
+      "title_ar": "احشُ الجرح العميق بقماش نظيف",
+      "title_en": "Pack the deep wound with clean material.",
+      "description_ar": "ادفع القماش داخل الجرح، ثم اضغط بقوة فوقه خمس دقائق على الأقل دون رفع اليد.",
+      "description_en": "Push the cloth into the wound, then press hard on top for at least 5 minutes without lifting.",
+      "sets": { "wound_packed": true },
+      "sources": ["WHO-CFAR", "ARC-LTB", "SJA-LTB"],
+      "source_note": "WHO-CFAR: place clean material into deep bleeding areas. ARC-LTB: packing for scalp, neck, shoulder, groin, back, limb (if trained). SJA-LTB: haemostatic pad held tightly minimum 5 minutes, packed tightly into the wound where needed.",
+      "next": "shock_care"
+    },
+
+    {
+      "id": "amputation_branch",
+      "type": "instruction",
+      "title_ar": "اضغط بقوة على مكان القطع",
+      "title_en": "Press hard on the stump.",
+      "description_ar": "السيطرة على النزيف أولًا. إن كان ذراعًا أو ساقًا ولم يتوقف النزيف، استخدم عاصبة.",
+      "description_en": "Control the bleeding first. If it is an arm or leg and bleeding continues, use a tourniquet.",
+      "sources": ["WHO-CFAR", "ARC-TQ"],
+      "source_note": "WHO-CFAR lists arm or leg amputation as a danger sign of severe life-threatening haemorrhage.",
+      "next": "instr_severed_part"
+    },
+    {
+      "id": "instr_severed_part",
+      "type": "instruction",
+      "title_ar": "احفظ الجزء المقطوع وأرسله مع المصاب",
+      "title_en": "Keep the severed part. Send it with them.",
+      "description_ar": "ضعه في كيس نايلون أو لُفّه بغلاف بلاستيكي، وتأكد أنه يذهب معه إلى المستشفى.",
+      "description_en": "Put it in a plastic bag or wrap it in cling film, and make sure it goes to hospital with them.",
+      "sets": { "severed_part_secured": true },
+      "sources": ["NWAS-FA"],
+      "source_note": "SOURCING GAP — NWAS-FA is the only reviewed authority giving severed-part handling. NHS national, ARC, BRC and SJA public pages do not cover preservation. Do NOT add cooling or ice instructions; no reviewed authority supports them. Partial amputation is likewise unsourced: instruct only 'do not pull the part away'.",
+      "next": "shock_care"
+    },
+
+    {
+      "id": "shock_care",
+      "type": "instruction",
+      "concurrent": true,
+      "title_ar": "مدّده على ظهره وارفع ساقيه",
+      "title_en": "Lay them down. Raise their legs.",
+      "description_ar": "ساقاه أعلى من مستوى القلب. فك الملابس الضيقة عند الرقبة والصدر والخصر.",
+      "description_en": "Legs higher than the heart. Loosen tight clothing at neck, chest and waist.",
+      "sets": { "shock_care_started": true },
+      "does_not_interrupt": "DIRECT_PRESSURE",
+      "sources": ["BRC-BH", "SJA-SB", "SJA-SHOCK", "WHO-CFAR"],
+      "next": "instr_keep_warm"
+    },
+    {
+      "id": "instr_keep_warm",
+      "type": "instruction",
+      "title_ar": "غطّه ليبقى دافئًا وطمئنه",
+      "title_en": "Cover them to keep warm. Reassure them.",
+      "description_ar": "استخدم معطفًا أو بطانية. استمر بالكلام معه.",
+      "description_en": "Use a coat or blanket. Keep talking to them.",
+      "sources": ["SJA-SHOCK", "BRC-BH", "ARC-LTB"],
+      "next": "check_response"
+    },
+
+    {
+      "id": "check_response",
+      "type": "question",
+      "question_ar": "نادِ عليه بصوت عالٍ وهزّ كتفيه. هل يستجيب؟",
+      "question_en": "Call his name loudly and shake his shoulders. Does he respond?",
+      "answers": {
+        "yes": "monitor",
+        "no": "instr_open_airway"
+      },
+      "sources": ["SJA-PS", "BRC-UNB", "ARC-FAS"],
+      "source_note": "ARC-FAS shout-tap-shout. SJA-PS Response step."
+    },
+    {
+      "id": "instr_open_airway",
+      "type": "instruction",
+      "title_ar": "أمِل رأسه للخلف وارفع ذقنه",
+      "title_en": "Tilt his head back. Lift his chin.",
+      "description_ar": "يد على الجبهة، وإصبعان تحت الذقن.",
+      "description_en": "One hand on the forehead, two fingers under the chin.",
+      "sources": ["SJA-PS", "BRC-UNB"],
+      "next": "check_breathing"
+    },
+    {
+      "id": "check_breathing",
+      "type": "question",
+      "question_ar": "انظر واستمع للتنفس ١٠ ثوانٍ. هل يتنفس بشكل طبيعي؟",
+      "question_en": "Look and listen for breathing for 10 seconds. Is he breathing normally?",
+      "hint_ar": "اللهاث المتقطع ليس تنفسًا طبيعيًا.",
+      "hint_en": "Occasional gasping is NOT normal breathing.",
+      "answers": {
+        "yes": "TRANSITION:UNRESPONSIVE_BREATHING",
+        "no": "TRANSITION:CARDIAC_ARREST"
+      },
+      "sources": ["SJA-PS", "ARC-FAS", "SJA-CPR", "BRC-UNB"],
+      "source_note": "SJA-PS: agonal gasping is not normal breathing. ARC-FAS: check no more than 10 seconds."
+    },
+
+    {
+      "id": "monitor",
+      "type": "monitor",
+      "title_ar": "ابقَ معه واستمر بالضغط",
+      "title_en": "Stay with them. Keep pressing.",
+      "description_ar": "أعد فحص الدورة الدموية كل ١٠ دقائق حتى وصول الإسعاف.",
+      "description_en": "Recheck circulation every 10 minutes until the ambulance arrives.",
+      "loop": {
+        "interval_seconds": 600,
+        "recheck_node": "instr_circulation_check",
+        "reassess_node": "check_response"
+      },
+      "watch_for": [
+        { "signal": "dressing soaked through", "goto": "q_dressing_soaked", "sources": ["SJA-LTB"] },
+        { "signal": "shock signs appear", "goto": "shock_care", "sources": ["SJA-SHOCK"] },
+        { "signal": "stops responding", "goto": "check_response", "sources": ["SJA-PS"] }
+      ],
+      "sources": ["SJA-SB", "NHS-CG", "ARC-LTB"],
+      "terminal": false
+    },
+
+    {
+      "id": "q_dressing_soaked",
+      "type": "instruction",
+      "title_ar": "لا ترفع يدك. أضف حشوة فوق الضماد",
+      "title_en": "Do not lift your hand. Add padding on top.",
+      "description_ar": "استمر بالضغط بقوة أكبر، وأخبر الإسعاف أن النزيف لا يتوقف.",
+      "description_en": "Press harder and tell the ambulance the bleeding is not stopping.",
+      "increments": { "dressings_soaked_count": 1 },
+      "sources": ["NWAS-HB", "BRC-BH", "SJA-SB", "SJA-LTB"],
+      "source_note": "DISAGREEMENT dis_dressing — NWAS-HB says add bandages over the first rather than removing it; BRC-BH and SJA-SB say replace the saturated material with fresh while maintaining pressure. Resolved toward layering because it carries no risk of dislodging a forming clot; the replace option is documented in dis_dressing.",
+      "next": "q_wound_site"
+    },
+
+    {
+      "id": "q_flow_character",
+      "type": "question",
+      "question_ar": "هل الدم يفور ويقفز، أم يسيل بثبات؟",
+      "question_en": "Is the blood spurting and pumping, or flowing steadily?",
+      "answers": { "spurting": "q_wound_site", "steady": "q_pressure_response" },
+      "sources": ["SJA-LTB", "WHO-CFAR", "ARC-LTB"]
+    },
+    {
+      "id": "q_pressure_response",
+      "type": "question",
+      "question_ar": "اضغط الآن بقماش نظيف. هل الدم ينفذ من خلاله أم يخف؟",
+      "question_en": "Press now with a clean cloth. Is blood soaking straight through, or slowing?",
+      "answers": { "soaking_through": "q_wound_site", "slowing": "q_shock_signs" },
+      "sources": ["NHS-CG", "SJA-LTB"]
+    },
+    {
+      "id": "q_shock_signs",
+      "type": "question",
+      "question_ar": "هل لونه شاحب، جلده بارد أو متعرق، يدوخ، أو لا يرد عليك بشكل طبيعي؟",
+      "question_en": "Are they pale, cold or sweaty, dizzy, or not answering you normally?",
+      "answers": { "yes": "shock_care", "no": "instr_apply_dressing" },
+      "sources": ["SJA-SHOCK", "BRC-BH"]
+    }
+  ],
+
+  "transitions": {
+    "UNRESPONSIVE_BREATHING": {
+      "target_flow": "unresponsive_breathing",
+      "reason_ar": "لا يستجيب لكنه يتنفس بشكل طبيعي",
+      "reason_en": "Unresponsive but breathing normally",
+      "carry_over": ["maintain direct pressure on the wound"],
+      "sources": ["SJA-RP"]
+    },
+    "CARDIAC_ARREST": {
+      "target_flow": "cardiac_arrest_cpr",
+      "reason_ar": "لا يستجيب ولا يتنفس بشكل طبيعي",
+      "reason_en": "Unresponsive and not breathing normally",
+      "carry_over": ["maintain pressure only if a second helper is present"],
+      "sources": ["SJA-CPR", "BRC-UNB", "ARC-FAS"]
+    },
+    "MINOR_WOUND": {
+      "target_flow": "minor_cuts_and_grazes",
+      "reason_ar": "توقف النزيف والجرح سطحي",
+      "reason_en": "Bleeding stopped and wound is superficial",
+      "sources": ["NHS-CG", "SJA-CG"]
+    },
+    "MEDICAL_HAEMORRHAGE": {
+      "target_flow": "medical_haemorrhage",
+      "reason_ar": "نزيف شديد من الأنف أو الفم أو الأمعاء أو المهبل دون إصابة",
+      "reason_en": "Severe bleeding from nose, mouth, bowels or vagina without trauma",
+      "sources": ["WHO-CFAR"]
+    }
+  },
+
+  "precedence_rules": [
+    {
+      "rule": "Catastrophic bleeding is addressed before airway when identified at the Response step",
+      "sources": ["SJA-PS"]
+    },
+    {
+      "rule": "Once the person is not breathing normally, CPR becomes the primary flow; maintain wound pressure only if a second helper is present",
+      "sources": ["SJA-CPR", "ARC-FAS"]
+    },
+    {
+      "rule": "Shock care runs concurrently with bleeding control and never replaces it",
+      "sources": ["SJA-SHOCK", "BRC-BH"]
+    }
+  ],
+
+  "never_do": [
+    { "rule_ar": "لا تنزع أي جسم مغروس في الجرح", "rule_en": "Never remove an object embedded in the wound", "sources": ["BRC-BH", "NHS-CG", "SJA-SB"] },
+    { "rule_ar": "لا تضغط مباشرة فوق الجسم المغروس", "rule_en": "Never press directly on top of an embedded object", "sources": ["NWAS-FA", "SJA-SB"] },
+    { "rule_ar": "لا تغسل جرحًا ينزف بغزارة", "rule_en": "Never wash a heavily bleeding wound — it increases bleeding", "sources": ["BRC-BH"] },
+    { "rule_ar": "لا تفك العاصبة بعد وضعها", "rule_en": "Never loosen or remove a tourniquet once applied", "sources": ["ARC-TQ", "SJA-LTB"] },
+    { "rule_ar": "لا تضع العاصبة فوق مفصل", "rule_en": "Never place a tourniquet on a joint", "sources": ["ARC-TQ", "SJA-LTB"] },
+    { "rule_ar": "لا تتوقف عن الشدّ بسبب الألم", "rule_en": "Do not stop tightening because the person is in pain", "sources": ["ARC-TQ"] },
+    { "rule_ar": "لا تشدّ الضماد لدرجة قطع الدورة الدموية", "rule_en": "Do not bandage so tightly that circulation is lost", "sources": ["SJA-SB", "NHS-CG"] },
+    { "rule_ar": "لا تترك المصاب لتبحث عن جهاز صدمات", "rule_en": "Do not leave the casualty to go looking for a defibrillator", "sources": ["SJA-CPR"] },
+    { "rule_ar": "لا تؤخر الضغط بحثًا عن قفازات أو ضماد مناسب", "rule_en": "Do not delay pressure to find gloves or a proper dressing", "sources": ["BRC-BH"] }
+  ],
+
+  "excluded_unsourced": {
+    "note": "None of NHS, ARC, BRC, SJA or WHO supports these in the pages reviewed. Do not add them.",
+    "items": [
+      "giving food or drink",
+      "applying pressure points",
+      "applying ice to a bleeding wound or to a severed part",
+      "cauterising",
+      "blind packing of neck or chest wounds",
+      "loosening a tourniquet to restore circulation"
+    ]
+  },
+
+  "disagreements": [
+    {
+      "id": "dis_dressing",
+      "topic": "Soaked dressing: replace or layer",
+      "positions": [
+        { "sources": ["BRC-BH", "SJA-SB"], "position": "Replace the saturated material with fresh, maintaining firm pressure" },
+        { "sources": ["NWAS-HB"], "position": "Add additional bandages over the first rather than removing it" }
+      ],
+      "app_resolution": "Layer on top. Never release pressure to swap.",
+      "surface_to_user": false
+    },
+    {
+      "id": "dis_elevation",
+      "topic": "Elevating the bleeding limb",
+      "positions": [
+        { "sources": ["NHS-CG", "WHO-CFAR"], "position": "Elevate the injured limb above heart or chest level" },
+        { "sources": ["BRC-BH", "ARC-LTB", "SJA-SB"], "position": "Elevation is not included in severe-bleeding steps; SJA-SB instead supports the limb with a sling" }
+      ],
+      "app_resolution": "Offer elevation as secondary only. It must never interrupt direct pressure.",
+      "surface_to_user": false
+    },
+    {
+      "id": "dis_tourniquet_timing",
+      "topic": "When to reach for a tourniquet",
+      "positions": [
+        { "sources": ["WHO-CFAR"], "position": "Last resort, after pressure, packing, wrapping and elevation have failed" },
+        { "sources": ["ARC-LTB", "ARC-TQ"], "position": "A primary care option for life-threatening limb bleeding, alongside direct pressure" },
+        { "sources": ["SJA-LTB"], "position": "Dedicated life-threatening-bleed pathway, after calling emergency services" }
+      ],
+      "app_resolution": "Surface once pressure has visibly failed, or immediately when blood is pumping from a limb.",
+      "surface_to_user": false
+    },
+    {
+      "id": "dis_tourniquet_placement",
+      "topic": "Tourniquet placement detail",
+      "positions": [
+        { "sources": ["ARC-TQ"], "position": "2–3 inches above the wound, between wound and heart, never on a joint" },
+        { "sources": ["SJA-LTB"], "position": "Close to and above the injury; below the elbow or knee is best; never on a joint" }
+      ],
+      "app_resolution": "State only the shared rule: above the wound, never on a joint. Do not invent a single distance.",
+      "surface_to_user": false
+    }
+  ],
+
+  "open_items": [
+    "Verify the correct emergency number per Iraqi region with the Ministry of Health before release.",
+    "Severed-part preservation beyond bag/cling-film is unsourced across all five authorities — keep the branch minimal.",
+    "Partial amputation has no public protocol in the reviewed sources — instruct only 'do not pull the part away'."
+  ]
+}

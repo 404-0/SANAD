@@ -1,0 +1,22 @@
+node_modules
+dist
+
+# API keys — in either supported location, and never a stray backup of one.
+.env
+.env.local
+.env.*.local
+*.env.testbackup
+
+# Generated speech. Rebuilt with `npm run tts`; hundreds of binary files that
+# would otherwise land in every clone and every diff.
+public/audio/
+
+# Test scratch
+.tts-stub-log.jsonl
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

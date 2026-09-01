@@ -1,0 +1,370 @@
+{
+  "id": "heat_illness",
+  "schema_version": "1.0.0",
+  "name_ar": "الإجهاد الحراري / ضربة الحرارة",
+  "name_en": "Heat Exhaustion / Heatstroke",
+  "last_reviewed": "2026-08-18",
+  "medical_disclaimer_required": true,
+  "emergency_number": {
+    "strategy": "REGION_CONFIGURED",
+    "number": null,
+    "requires_verification": true
+  },
+  "sources": {
+    "NHS-HEAT": {
+      "title": "NHS — Heat exhaustion and heatstroke",
+      "url": "https://www.nhs.uk/conditions/heat-exhaustion-heatstroke/"
+    },
+    "SJA-HEAT-EXHAUSTION": {
+      "title": "St John Ambulance — Heat exhaustion",
+      "url": "https://www.sja.org.uk/first-aid-advice/heat-exhaustion/"
+    },
+    "SJA-HEATSTROKE": {
+      "title": "St John Ambulance — Heatstroke",
+      "url": "https://www.sja.org.uk/first-aid-advice/heatstroke/"
+    },
+    "ARC-HEAT-EXHAUSTION": {
+      "title": "American Red Cross — Heat Exhaustion",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/heat-exhaustion"
+    },
+    "ARC-HEATSTROKE": {
+      "title": "American Red Cross — Heat Stroke",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/heat-stroke"
+    }
+  },
+  "classification": {
+    "heat_exhaustion_signals": [
+      {
+        "signal": "tiredness, dizziness, headache, nausea, heavy sweating, pale/clammy skin, cramps, thirst, or weakness during heat exposure",
+        "sources": [
+          "NHS-HEAT",
+          "SJA-HEAT-EXHAUSTION",
+          "ARC-HEAT-EXHAUSTION"
+        ]
+      }
+    ],
+    "heatstroke_emergency_signals": [
+      {
+        "signal": "confusion, unusual behaviour, or loss of coordination",
+        "sources": [
+          "NHS-HEAT",
+          "SJA-HEATSTROKE"
+        ]
+      },
+      {
+        "signal": "seizure",
+        "sources": [
+          "NHS-HEAT",
+          "SJA-HEATSTROKE"
+        ]
+      },
+      {
+        "signal": "loss of consciousness or rapidly worsening responsiveness",
+        "sources": [
+          "NHS-HEAT",
+          "SJA-HEATSTROKE"
+        ]
+      },
+      {
+        "signal": "very high temperature or hot skin with failure to cool",
+        "sources": [
+          "NHS-HEAT",
+          "SJA-HEATSTROKE"
+        ]
+      },
+      {
+        "signal": "heat-exhaustion symptoms still present after about 30 minutes of cooling and fluids",
+        "sources": [
+          "NHS-HEAT"
+        ]
+      }
+    ],
+    "allow_uncertain": true,
+    "uncertain_behavior": {
+      "action": "START_COOLING_AND_CHECK_RED_FLAGS",
+      "goto": "move_to_cool_place"
+    }
+  },
+  "state": {
+    "likely_heatstroke": null,
+    "fully_alert": null,
+    "able_to_swallow": null,
+    "cooling_started": false,
+    "fluids_given": false,
+    "emergency_called": false,
+    "seizure_present": false
+  },
+  "entry_logic": {
+    "start_node": "move_to_cool_place"
+  },
+  "nodes": [
+    {
+      "id": "move_to_cool_place",
+      "type": "instruction",
+      "title_ar": "انقل المصاب إلى مكان بارد أو مظلل",
+      "title_en": "Move the person to a cool or shaded place.",
+      "description_ar": "أوقف النشاط وساعده على الراحة.",
+      "description_en": "Stop activity and help them rest.",
+      "next": "remove_excess_clothing",
+      "sources": [
+        "NHS-HEAT",
+        "SJA-HEAT-EXHAUSTION",
+        "SJA-HEATSTROKE",
+        "ARC-HEAT-EXHAUSTION"
+      ]
+    },
+    {
+      "id": "remove_excess_clothing",
+      "type": "instruction",
+      "title_ar": "أزل الملابس الزائدة",
+      "title_en": "Remove unnecessary clothing.",
+      "description_ar": "خفف الملابس الخارجية أو الضيقة للمساعدة على التبريد.",
+      "description_en": "Loosen or remove unnecessary outer clothing to help cooling.",
+      "next": "cool_person",
+      "sources": [
+        "NHS-HEAT",
+        "SJA-HEATSTROKE",
+        "ARC-HEAT-EXHAUSTION"
+      ]
+    },
+    {
+      "id": "cool_person",
+      "type": "instruction",
+      "title_ar": "ابدأ تبريده الآن",
+      "title_en": "Start cooling them now.",
+      "description_ar": "رش أو امسح الجلد بماء بارد واهوه. يمكن وضع كمادات باردة ملفوفة عند الرقبة وتحت الإبطين.",
+      "description_en": "Spray or sponge the skin with cool water and fan them. Wrapped cold packs can be placed at the neck and armpits.",
+      "sets": {
+        "cooling_started": true
+      },
+      "next": "q_heatstroke_signs",
+      "sources": [
+        "NHS-HEAT",
+        "SJA-HEATSTROKE",
+        "ARC-HEATSTROKE"
+      ]
+    },
+    {
+      "id": "q_heatstroke_signs",
+      "type": "question",
+      "question_ar": "هل يوجد ارتباك، فقدان وعي، تشنج، تدهور سريع، أو حرارة شديدة جدًا؟",
+      "question_en": "Is there confusion, unconsciousness, seizure, rapid deterioration, or very high body temperature?",
+      "answers": {
+        "yes": "heatstroke_emergency",
+        "no": "q_can_drink"
+      },
+      "sources": [
+        "NHS-HEAT",
+        "SJA-HEATSTROKE"
+      ]
+    },
+    {
+      "id": "heatstroke_emergency",
+      "type": "instruction",
+      "title_ar": "اتصل بخدمات الطوارئ الآن واستمر بالتبريد",
+      "title_en": "Call emergency services now and keep cooling.",
+      "description_ar": "ضربة الحرارة حالة طارئة. لا توقف التبريد أثناء انتظار المساعدة.",
+      "description_en": "Heatstroke is a medical emergency. Continue cooling while waiting for help.",
+      "sets": {
+        "likely_heatstroke": true,
+        "emergency_called": true
+      },
+      "next": "monitor_heatstroke",
+      "sources": [
+        "NHS-HEAT",
+        "SJA-HEATSTROKE",
+        "ARC-HEATSTROKE"
+      ]
+    },
+    {
+      "id": "q_can_drink",
+      "type": "question",
+      "question_ar": "هل هو واعٍ تمامًا ويستطيع البلع بأمان؟",
+      "question_en": "Is the person fully alert and able to swallow safely?",
+      "answers": {
+        "yes": "give_fluids",
+        "no": "heatstroke_emergency"
+      },
+      "sources": [
+        "ARC-HEAT-EXHAUSTION",
+        "NHS-HEAT"
+      ]
+    },
+    {
+      "id": "give_fluids",
+      "type": "instruction",
+      "title_ar": "أعطه ماءً باردًا أو مشروب تعويض سوائل على رشفات",
+      "title_en": "Give cool water or a rehydration drink in small sips.",
+      "description_ar": "لا تجعله يشرب بسرعة. استمر بالتبريد والمراقبة.",
+      "description_en": "Do not make them drink quickly. Continue cooling and monitoring.",
+      "sets": {
+        "fluids_given": true,
+        "likely_heatstroke": false
+      },
+      "next": "monitor_exhaustion",
+      "sources": [
+        "NHS-HEAT",
+        "SJA-HEAT-EXHAUSTION",
+        "ARC-HEAT-EXHAUSTION"
+      ]
+    },
+    {
+      "id": "monitor_exhaustion",
+      "type": "monitor",
+      "title_ar": "راقبه أثناء التبريد لمدة تصل إلى 30 دقيقة",
+      "title_en": "Monitor while cooling for up to 30 minutes.",
+      "description_ar": "إذا لم يتحسن خلال نحو 30 دقيقة، أو ساءت حالته، تعامل معها كضربة حرارة واطلب الطوارئ.",
+      "description_en": "If they are still unwell after about 30 minutes, or worsen sooner, treat it as heatstroke and call emergency services.",
+      "watch_for": [
+        {
+          "signal": "not_improved_after_30_minutes",
+          "goto": "heatstroke_emergency"
+        },
+        {
+          "signal": "confusion_or_unusual_behavior",
+          "goto": "heatstroke_emergency"
+        },
+        {
+          "signal": "unresponsive_but_breathing",
+          "goto": "TRANSITION:UNRESPONSIVE_BREATHING"
+        },
+        {
+          "signal": "not_breathing_normally",
+          "goto": "TRANSITION:CARDIAC_ARREST_CPR"
+        },
+        {
+          "signal": "seizure",
+          "goto": "TRANSITION:SEIZURE"
+        },
+        {
+          "signal": "fully_recovered",
+          "goto": "recovered"
+        }
+      ],
+      "sources": [
+        "NHS-HEAT",
+        "ARC-HEAT-EXHAUSTION"
+      ]
+    },
+    {
+      "id": "monitor_heatstroke",
+      "type": "monitor",
+      "title_ar": "استمر بالتبريد وراقب التنفس والاستجابة",
+      "title_en": "Keep cooling and monitor breathing and responsiveness.",
+      "watch_for": [
+        {
+          "signal": "unresponsive_but_breathing",
+          "goto": "TRANSITION:UNRESPONSIVE_BREATHING"
+        },
+        {
+          "signal": "not_breathing_normally",
+          "goto": "TRANSITION:CARDIAC_ARREST_CPR"
+        },
+        {
+          "signal": "seizure",
+          "goto": "TRANSITION:SEIZURE"
+        },
+        {
+          "signal": "emergency_services_take_over",
+          "goto": "END"
+        }
+      ],
+      "sources": [
+        "SJA-HEATSTROKE",
+        "ARC-HEATSTROKE"
+      ]
+    },
+    {
+      "id": "recovered",
+      "type": "instruction",
+      "title_ar": "دعه يرتاح واستمر بالمراقبة",
+      "title_en": "Let them rest and continue observing.",
+      "description_ar": "لا يعود للنشاط مباشرة بعد تحسن الأعراض.",
+      "description_en": "Do not return immediately to strenuous activity after symptoms resolve.",
+      "terminal": true,
+      "sources": [
+        "ARC-HEAT-EXHAUSTION"
+      ]
+    }
+  ],
+  "transitions": {
+    "UNRESPONSIVE_BREATHING": {
+      "target_flow": "unresponsive_breathing",
+      "reason_ar": "أصبح غير مستجيب لكنه يتنفس بشكل طبيعي",
+      "reason_en": "The person became unresponsive but is breathing normally",
+      "sources": [
+        "SJA-HEATSTROKE",
+        "ARC-HEAT-EXHAUSTION"
+      ]
+    },
+    "CARDIAC_ARREST_CPR": {
+      "target_flow": "cardiac_arrest_cpr",
+      "reason_ar": "أصبح غير مستجيب ولا يتنفس بشكل طبيعي",
+      "reason_en": "The person became unresponsive and is not breathing normally",
+      "sources": [
+        "ARC-HEAT-EXHAUSTION"
+      ]
+    },
+    "SEIZURE": {
+      "target_flow": "seizure",
+      "reason_ar": "حدثت نوبة أثناء ضربة الحرارة",
+      "reason_en": "A seizure occurred during heatstroke",
+      "sources": [
+        "NHS-HEAT",
+        "SJA-HEATSTROKE"
+      ]
+    }
+  },
+  "precedence_rules": [
+    {
+      "rule": "Suspected heatstroke is a medical emergency: call emergency services and begin rapid cooling.",
+      "sources": [
+        "NHS-HEAT",
+        "SJA-HEATSTROKE",
+        "ARC-HEATSTROKE"
+      ]
+    },
+    {
+      "rule": "Give fluids only when the person is responsive and able to swallow safely.",
+      "sources": [
+        "ARC-HEAT-EXHAUSTION"
+      ]
+    },
+    {
+      "rule": "If heat-exhaustion symptoms do not improve after about 30 minutes of cooling and fluids, escalate as possible heatstroke.",
+      "sources": [
+        "NHS-HEAT"
+      ]
+    }
+  ],
+  "never_do": [
+    {
+      "rule_ar": "لا تعطِ شرابًا لشخص غير واعٍ أو غير قادر على البلع بأمان",
+      "rule_en": "Do not give fluids to someone who is unresponsive or unable to swallow safely",
+      "sources": [
+        "ARC-HEAT-EXHAUSTION"
+      ]
+    },
+    {
+      "rule_ar": "لا تؤخر طلب الطوارئ عند وجود علامات ضربة الحرارة",
+      "rule_en": "Do not delay emergency help when heatstroke signs are present",
+      "sources": [
+        "NHS-HEAT",
+        "SJA-HEATSTROKE"
+      ]
+    },
+    {
+      "rule_ar": "لا توقف التبريد أثناء انتظار المساعدة",
+      "rule_en": "Do not stop cooling while waiting for emergency help",
+      "sources": [
+        "SJA-HEATSTROKE",
+        "ARC-HEATSTROKE"
+      ]
+    }
+  ],
+  "open_items": [
+    "Verify emergency-service numbers per Iraqi region before release.",
+    "This SANAD MVP uses simple cooling methods suitable for lay users; advanced exertional-heatstroke cooling protocols are intentionally excluded.",
+    "Do not diagnose heatstroke from body temperature alone; neurological deterioration and failure to improve are also important warning signs."
+  ]
+}

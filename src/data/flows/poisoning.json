@@ -1,0 +1,343 @@
+{
+  "id": "poisoning",
+  "schema_version": "1.0.0",
+  "name_ar": "التسمم",
+  "name_en": "Poisoning",
+  "last_reviewed": "2026-08-18",
+  "medical_disclaimer_required": true,
+  "emergency_number": {
+    "strategy": "REGION_CONFIGURED",
+    "number": null,
+    "requires_verification": true
+  },
+  "sources": {
+    "NHS-POISONING": {
+      "title": "NHS — Poisoning",
+      "url": "https://www.nhs.uk/conditions/poisoning/"
+    },
+    "NHS-FIRST-AID": {
+      "title": "NHS — First aid: poisoning",
+      "url": "https://www.nhs.uk/tests-and-treatments/first-aid/"
+    },
+    "SJA-POISONING": {
+      "title": "St John Ambulance — Poisoning",
+      "url": "https://www.sja.org.uk/first-aid-advice/poisoning/"
+    },
+    "SJA-OVERDOSE": {
+      "title": "St John Ambulance — Drug overdose",
+      "url": "https://www.sja.org.uk/first-aid-advice/overdose/"
+    },
+    "SJA-CO": {
+      "title": "St John Ambulance — Carbon monoxide poisoning",
+      "url": "https://www.sja.org.uk/first-aid-advice/carbon-monoxide-poisoning/"
+    },
+    "NHS-CO": {
+      "title": "NHS — Carbon monoxide poisoning",
+      "url": "https://www.nhs.uk/conditions/carbon-monoxide-poisoning/"
+    },
+    "ARC-POISON": {
+      "title": "American Red Cross — Poison Exposure",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/poison-exposure"
+    }
+  },
+  "classification": {
+    "high_confidence_signals": [
+      {
+        "signal": "known or suspected swallowing of a harmful substance or overdose",
+        "sources": [
+          "NHS-POISONING",
+          "NHS-FIRST-AID",
+          "SJA-POISONING"
+        ]
+      },
+      {
+        "signal": "known or suspected inhalation of poisonous gas or fumes",
+        "sources": [
+          "NHS-POISONING",
+          "NHS-CO",
+          "SJA-CO"
+        ]
+      },
+      {
+        "signal": "harmful chemical or toxic substance on skin or in eyes",
+        "sources": [
+          "NHS-POISONING",
+          "ARC-POISON"
+        ]
+      }
+    ],
+    "emergency_signals": [
+      {
+        "signal": "loss of consciousness",
+        "sources": [
+          "NHS-POISONING"
+        ]
+      },
+      {
+        "signal": "stopped breathing, gasping, or severe difficulty breathing",
+        "sources": [
+          "NHS-POISONING"
+        ]
+      },
+      {
+        "signal": "seizure",
+        "sources": [
+          "NHS-POISONING"
+        ]
+      }
+    ],
+    "allow_uncertain": true,
+    "uncertain_behavior": {
+      "action": "ASK_EXPOSURE_TYPE",
+      "goto": "q_exposure_type"
+    }
+  },
+  "state": {
+    "exposure_type": null,
+    "responsive": null,
+    "breathing_normally": null,
+    "substance_known": false,
+    "packaging_saved": false,
+    "emergency_called": false
+  },
+  "entry_logic": {
+    "start_node": "q_immediate_danger"
+  },
+  "nodes": [
+    {
+      "id": "q_immediate_danger",
+      "type": "question",
+      "question_ar": "هل المصاب فاقد الوعي، لديه تشنج، أو لا يتنفس بشكل طبيعي؟",
+      "question_en": "Is the person unconscious, having a seizure, or not breathing normally?",
+      "answers": {
+        "not_breathing_normally": "TRANSITION:CARDIAC_ARREST_CPR",
+        "seizure": "TRANSITION:SEIZURE",
+        "unresponsive_breathing": "TRANSITION:UNRESPONSIVE_BREATHING",
+        "no": "q_exposure_type"
+      },
+      "sources": [
+        "NHS-POISONING",
+        "SJA-OVERDOSE"
+      ]
+    },
+    {
+      "id": "q_exposure_type",
+      "type": "question",
+      "question_ar": "كيف تعرض للمادة؟",
+      "question_en": "How was the person exposed?",
+      "answers": {
+        "swallowed": "swallowed_poison",
+        "inhaled": "inhaled_poison",
+        "skin_or_eye": "skin_eye_exposure",
+        "unknown": "call_emergency"
+      },
+      "sources": [
+        "NHS-POISONING"
+      ]
+    },
+    {
+      "id": "swallowed_poison",
+      "type": "instruction",
+      "title_ar": "لا تحاول جعله يتقيأ",
+      "title_en": "Do not make them vomit.",
+      "description_ar": "احتفظ بعلبة أو اسم المادة إن أمكن. حاول معرفة ماذا أخذ، وكم تقريبًا، ومتى.",
+      "description_en": "Keep the container or label if possible. Find out what was taken, approximately how much, and when.",
+      "sets": {
+        "exposure_type": "swallowed"
+      },
+      "next": "call_emergency",
+      "sources": [
+        "SJA-POISONING",
+        "SJA-OVERDOSE",
+        "NHS-POISONING"
+      ]
+    },
+    {
+      "id": "inhaled_poison",
+      "type": "instruction",
+      "title_ar": "لا تدخل مكانًا يحتوي غازًا سامًا إذا كان غير آمن",
+      "title_en": "Do not enter an unsafe area containing poisonous gas.",
+      "description_ar": "إذا كان الوصول آمنًا، أبعد المصاب إلى هواء نقي. لا تعد إلى المكان الملوث.",
+      "description_en": "If it is safe to reach them, move the person to fresh air. Do not re-enter the contaminated area.",
+      "sets": {
+        "exposure_type": "inhaled"
+      },
+      "next": "call_emergency",
+      "sources": [
+        "NHS-CO",
+        "SJA-CO"
+      ]
+    },
+    {
+      "id": "skin_eye_exposure",
+      "type": "instruction",
+      "title_ar": "ابتعد عن المادة وامنع المزيد من التعرض",
+      "title_en": "Move away from the substance and prevent further exposure.",
+      "description_ar": "لا تلمس المادة بيديك العاريتين. اتبع تعليمات العبوة أو خدمات الطوارئ بشأن إزالة المادة أو غسلها.",
+      "description_en": "Do not touch the substance with bare hands. Follow the product label or emergency-service instructions for decontamination.",
+      "sets": {
+        "exposure_type": "skin_or_eye"
+      },
+      "next": "call_emergency",
+      "sources": [
+        "NHS-POISONING",
+        "ARC-POISON"
+      ]
+    },
+    {
+      "id": "call_emergency",
+      "type": "instruction",
+      "title_ar": "اتصل بخدمات الطوارئ الآن",
+      "title_en": "Call emergency services now.",
+      "description_ar": "أخبرهم باسم المادة إن عرفته، والكمية التقريبية، ووقت التعرض، وطريقة التعرض.",
+      "description_en": "Tell them the substance if known, the approximate amount, when exposure happened, and how exposure occurred.",
+      "sets": {
+        "emergency_called": true
+      },
+      "next": "save_evidence",
+      "sources": [
+        "NHS-POISONING",
+        "SJA-POISONING"
+      ]
+    },
+    {
+      "id": "save_evidence",
+      "type": "instruction",
+      "title_ar": "احتفظ بالعبوة أو الملصق إن أمكن",
+      "title_en": "Keep the container or label if possible.",
+      "description_ar": "أعطها للطاقم الطبي للمساعدة في معرفة المادة.",
+      "description_en": "Give it to medical professionals to help identify the substance.",
+      "sets": {
+        "packaging_saved": true
+      },
+      "next": "monitor",
+      "sources": [
+        "SJA-POISONING"
+      ]
+    },
+    {
+      "id": "monitor",
+      "type": "monitor",
+      "title_ar": "ابقَ معه وراقب التنفس والاستجابة",
+      "title_en": "Stay with them and monitor breathing and responsiveness.",
+      "watch_for": [
+        {
+          "signal": "unresponsive_but_breathing",
+          "goto": "TRANSITION:UNRESPONSIVE_BREATHING"
+        },
+        {
+          "signal": "not_breathing_normally",
+          "goto": "TRANSITION:CARDIAC_ARREST_CPR"
+        },
+        {
+          "signal": "seizure",
+          "goto": "TRANSITION:SEIZURE"
+        },
+        {
+          "signal": "emergency_services_take_over",
+          "goto": "END"
+        }
+      ],
+      "sources": [
+        "SJA-POISONING",
+        "SJA-OVERDOSE",
+        "NHS-POISONING"
+      ]
+    }
+  ],
+  "transitions": {
+    "UNRESPONSIVE_BREATHING": {
+      "target_flow": "unresponsive_breathing",
+      "reason_ar": "المصاب غير مستجيب لكنه يتنفس بشكل طبيعي",
+      "reason_en": "The person is unresponsive but breathing normally",
+      "sources": [
+        "SJA-OVERDOSE",
+        "NHS-POISONING"
+      ]
+    },
+    "CARDIAC_ARREST_CPR": {
+      "target_flow": "cardiac_arrest_cpr",
+      "reason_ar": "المصاب لا يتنفس بشكل طبيعي",
+      "reason_en": "The person is not breathing normally",
+      "sources": [
+        "SJA-OVERDOSE",
+        "NHS-POISONING"
+      ]
+    },
+    "SEIZURE": {
+      "target_flow": "seizure",
+      "reason_ar": "حدثت نوبة مرتبطة بالتسمم",
+      "reason_en": "A seizure occurred during suspected poisoning",
+      "sources": [
+        "NHS-POISONING"
+      ]
+    }
+  },
+  "precedence_rules": [
+    {
+      "rule": "Life-threatening problems with breathing, responsiveness, or seizures take priority over identifying the poison.",
+      "sources": [
+        "NHS-POISONING",
+        "SJA-OVERDOSE"
+      ]
+    },
+    {
+      "rule": "Do not induce vomiting after suspected poisoning.",
+      "sources": [
+        "SJA-OVERDOSE",
+        "NHS-POISONING"
+      ]
+    },
+    {
+      "rule": "For inhaled poisons, rescuer safety comes before entering a contaminated area.",
+      "sources": [
+        "NHS-CO",
+        "SJA-CO"
+      ]
+    },
+    {
+      "rule": "Keep packaging or labels and report what, how much, when, and how the exposure occurred when known.",
+      "sources": [
+        "SJA-POISONING"
+      ]
+    }
+  ],
+  "never_do": [
+    {
+      "rule_ar": "لا تحاول جعل المصاب يتقيأ",
+      "rule_en": "Do not induce vomiting",
+      "sources": [
+        "SJA-OVERDOSE",
+        "NHS-POISONING"
+      ]
+    },
+    {
+      "rule_ar": "لا تعطِ طعامًا أو شرابًا أو علاجًا منزليًا بشكل عشوائي",
+      "rule_en": "Do not give food, drink, or a home remedy unless instructed by a medical professional",
+      "sources": [
+        "NHS-POISONING"
+      ]
+    },
+    {
+      "rule_ar": "لا تدخل مكانًا ملوثًا بالغاز إذا كان ذلك يعرضك للخطر",
+      "rule_en": "Do not enter a gas-contaminated area if doing so puts you at risk",
+      "sources": [
+        "NHS-CO",
+        "SJA-CO"
+      ]
+    },
+    {
+      "rule_ar": "لا تلمس مادة سامة بيديك العاريتين",
+      "rule_en": "Do not handle a toxic substance with bare hands",
+      "sources": [
+        "ARC-POISON"
+      ]
+    }
+  ],
+  "open_items": [
+    "Verify emergency-service and poison-information numbers per Iraqi region before release.",
+    "SANAD should never recommend a specific antidote unless a dedicated, verified protocol is added for a specific poison.",
+    "Chemical eye/skin exposure can later be expanded into a dedicated chemical-exposure flow; this MVP intentionally routes users toward professional guidance rather than guessing decontamination steps.",
+    "Food poisoning is not handled by this emergency toxic-exposure flow unless severe emergency signs are present."
+  ]
+}
